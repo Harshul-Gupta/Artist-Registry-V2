@@ -1,10 +1,9 @@
- package com.hars.ArtistRegistry.repository;
-
+ package com.hars.ArtistRegistry.Repository;
 
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.query.Param;
+
 public interface ArtistRepo extends MongoRepository<Artist, String>{
 
 	List<Artist> findByNameContainingIgnoreCaseAndGenreContaining(String name, String genre);

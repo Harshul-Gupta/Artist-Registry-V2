@@ -1,4 +1,4 @@
-package com.hars.ArtistRegistry.repository;
+package com.hars.ArtistRegistry.Repository;
 
 import java.util.HashSet;
 import java.util.Set;

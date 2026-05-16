@@ -1,4 +1,4 @@
-package com.hars.ArtistRegistry.repository;
+package com.hars.ArtistRegistry.Repository;
 
 public enum ArtistType {
 	solo,

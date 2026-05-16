@@ -384,6 +384,99 @@
     footer p { font-size: .8rem; color: var(--text-muted); }
     footer a { color: var(--red); text-decoration: none; opacity: .72; }
     footer a:hover { opacity: 1; }
+
+    /* ── PAGINATION ── */
+    .section-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.4rem;
+    }
+    .section-header-row .section-label { margin-bottom: 0; }
+
+    .pagination-controls {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .page-indicator {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      padding: 0 0.3rem;
+      min-width: 3.5rem;
+      text-align: center;
+    }
+    .btn-page {
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.22s, background 0.22s, border-color 0.22s,
+                  transform 0.22s cubic-bezier(.22,1,.36,1),
+                  box-shadow 0.22s;
+    }
+    .btn-page svg { width: 15px; height: 15px; flex-shrink: 0; transition: transform 0.22s; }
+    .btn-page:hover:not(:disabled) {
+      background: rgba(232,48,42,0.12);
+      border-color: rgba(232,48,42,0.38);
+      color: var(--red-light);
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(232,48,42,0.20);
+    }
+    .btn-page:hover:not(:disabled) svg { transform: scale(1.15); }
+    .btn-page:active:not(:disabled) { transform: scale(0.96); }
+    .btn-page:disabled {
+      opacity: 0.25; cursor: not-allowed;
+    }
+    /* shimmer on hover */
+    .btn-page::after {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+      transition: left 0.4s ease;
+    }
+    .btn-page:hover:not(:disabled)::after { left: 140%; }
+
+    /* loading spinner inside btn */
+    .btn-page.loading svg { opacity: 0; }
+    .btn-page.loading::before {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(232,48,42,0.30);
+      border-top-color: var(--red-light);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SLIDE ANIMATIONS ── */
+    .tiles-grid-wrap { overflow: hidden; }
+
+    @keyframes slideOutLeft {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(-6%); }
+    }
+    @keyframes slideOutRight {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(6%); }
+    }
+    @keyframes slideInFromRight {
+      from { opacity: 0; transform: translateX(7%); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInFromLeft {
+      from { opacity: 0; transform: translateX(-7%); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .tiles-grid.anim-out-left  { animation: slideOutLeft  0.28s cubic-bezier(.4,0,.6,1) both; }
+    .tiles-grid.anim-out-right { animation: slideOutRight 0.28s cubic-bezier(.4,0,.6,1) both; }
+    .tiles-grid.anim-in-right  { animation: slideInFromRight 0.36s cubic-bezier(.22,1,.36,1) both; }
+    .tiles-grid.anim-in-left   { animation: slideInFromLeft  0.36s cubic-bezier(.22,1,.36,1) both; }
   </style>
 </head>
 <body>
@@ -404,7 +497,7 @@
         <div class="logo-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18A9 9 0 0012 3zm0 2a7 7 0 110 14A7 7 0 0112 5zm-1 3v5.586l-2.707 2.707 1.414 1.414L13 15.414V8h-2z"/></svg>
         </div>
-        Reso<span>nance</span>
+        Reso<span>Nance</span>
       </a>
       <ul class="nav-links">
         <li><a href="#">About</a></li>
@@ -479,28 +572,58 @@
         </div>
         <div class="result-meta">
           <div class="result-count-badge">
-            <span>${fn:length(artists)}</span>
-            artist${fn:length(artists) ne 1 ? 's' : ''} found
+            <span>${fn:length(artists.content)}</span>
+            artist${fn:length(artists.content) ne 1 ? 's' : ''} found
           </div>
         </div>
       </div>
     </header>
 
-    <%-- Section label — "Artists" like Apple Music --%>
-    <c:if test="${not empty artists}">
-      <div class="section-label">
-        Artists
-        <span class="section-label-count">${fn:length(artists)} result${fn:length(artists) ne 1 ? 's' : ''}</span>
+    <%-- Section label + pagination controls row --%>
+    <c:if test="${not empty artists.content}">
+      <div class="section-header-row">
+        <div class="section-label">
+          Artists
+          <span class="section-label-count">${fn:length(artists.content)} result${fn:length(artists.content) ne 1 ? 's' : ''}</span>
+        </div>
+        <div class="pagination-controls"
+             id="pagination-controls"
+             data-page="${empty param.page ? 0 : param.page}"
+             data-has-prev="${artists.hasPrevious()}"
+             data-has-next="${artists.hasNext()}">
+
+          <button class="btn-page" id="btn-prev" aria-label="Previous page"
+                  <c:if test="${not artists.hasPrevious()}">disabled</c:if>>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+
+          <span class="page-indicator" id="page-indicator">
+            Pg&#160;${empty param.page ? 1 : param.page + 1}
+          </span>
+
+          <button class="btn-page" id="btn-next" aria-label="Next page"
+                  <c:if test="${not artists.hasNext()}">disabled</c:if>>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+
+        </div>
       </div>
     </c:if>
 
     <%-- 5-column Apple Music-style artist grid --%>
+    <div class="tiles-grid-wrap">
     <div class="tiles-grid" id="tiles-grid" role="list" aria-label="Search results">
 
       <c:choose>
 
         <%-- Empty results state --%>
-        <c:when test="${empty artists}">
+        <c:when test="${empty artists.content}">
           <div class="empty-state" role="listitem">
             <div class="empty-icon" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,250,0.28)" stroke-width="1.5" stroke-linecap="round">
@@ -525,7 +648,7 @@
 
         <%-- Artist cards --%>
         <c:otherwise>
-          <c:forEach var="artist" items="${artists}" varStatus="status">
+          <c:forEach var="artist" items="${artists.content}" varStatus="status">
             <c:set var="delay" value="${status.index * 45 > 360 ? 360 : status.index * 45}" />
 
             <a href="#"
@@ -594,7 +717,8 @@
         </c:otherwise>
 
       </c:choose>
-    </div>
+    </div><%-- /tiles-grid --%>
+    </div><%-- /tiles-grid-wrap --%>
 
   </div>
 </main>
@@ -681,6 +805,129 @@
     document.querySelectorAll('.hero-tile.selected').forEach(t => t.classList.remove('selected'));
     updateSelectionBar();
   });
+
+  /* ── AJAX Pagination ── */
+  (function () {
+    const btnPrev   = document.getElementById('btn-prev');
+    const btnNext   = document.getElementById('btn-next');
+    const pageInd   = document.getElementById('page-indicator');
+    const grid      = document.getElementById('tiles-grid');
+    const controls  = document.getElementById('pagination-controls');
+    if (!btnPrev || !btnNext || !grid) return;
+
+    let currentPage = parseInt(controls.dataset.page, 10) || 0;
+
+    /* Build the fetch URL preserving existing name/genre params */
+    function buildUrl(page) {
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('page', page);
+      return window.location.pathname + '?' + sp.toString();
+    }
+
+    /* Animate the grid out, swap content, animate in */
+    function animateSwap(direction, newHTML, newPage, hasNext, hasPrev) {
+      const outClass = direction === 'next' ? 'anim-out-left' : 'anim-out-right';
+      const inClass  = direction === 'next' ? 'anim-in-right' : 'anim-in-left';
+
+      /* --- slide out --- */
+      grid.classList.add(outClass);
+
+      grid.addEventListener('animationend', function onOut() {
+        grid.removeEventListener('animationend', onOut);
+        grid.classList.remove(outClass);
+
+        /* Swap the inner HTML */
+        grid.innerHTML = newHTML;
+
+        /* Re-attach tile selection listeners on new tiles */
+        grid.querySelectorAll('.hero-tile').forEach(tile => {
+          tile.addEventListener('click', e => {
+            e.preventDefault();
+            const id = tile.dataset.id;
+            if (selectedIds.has(id)) { selectedIds.delete(id); tile.classList.remove('selected'); }
+            else                     { selectedIds.add(id);    tile.classList.add('selected');    }
+            updateSelectionBar();
+          });
+          tile.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tile.click(); }
+          });
+          tile.setAttribute('tabindex', '0');
+        });
+
+        /* Update page indicator */
+        currentPage = newPage;
+        if (pageInd) pageInd.textContent = 'Pg\u00A0' + (currentPage + 1);
+
+        /* Update button states */
+        btnPrev.disabled = !hasPrev;
+        btnNext.disabled = !hasNext;
+
+        /* Push history state */
+        const newUrl = buildUrl(currentPage);
+        history.pushState({ page: currentPage }, '', newUrl);
+
+        /* --- slide in --- */
+        grid.classList.add(inClass);
+        grid.addEventListener('animationend', function onIn() {
+          grid.removeEventListener('animationend', onIn);
+          grid.classList.remove(inClass);
+        }, { once: true });
+
+      }, { once: true });
+    }
+
+    /* Fetch a page and extract only the tiles-grid inner HTML + meta */
+    async function loadPage(direction) {
+      const targetPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+      if (targetPage < 0) return;
+
+      /* Loading state */
+      const btn = direction === 'next' ? btnNext : btnPrev;
+      btn.classList.add('loading');
+      btn.disabled = true;
+      btnPrev.disabled = true;
+      btnNext.disabled = true;
+
+      try {
+        const resp = await fetch(buildUrl(targetPage), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!resp.ok) throw new Error('Network response was not ok');
+        const html = await resp.text();
+
+        /* Parse the fetched page */
+        const parser   = new DOMParser();
+        const doc      = parser.parseFromString(html, 'text/html');
+        const newGrid  = doc.getElementById('tiles-grid');
+        const newCtrls = doc.getElementById('pagination-controls');
+
+        if (!newGrid) throw new Error('Could not find grid in response');
+
+        const hasNext = newCtrls ? newCtrls.dataset.hasNext === 'true' : false;
+        const hasPrev = newCtrls ? newCtrls.dataset.hasPrev === 'true' : false;
+        const pageNum = newCtrls ? parseInt(newCtrls.dataset.page, 10) : targetPage;
+
+        animateSwap(direction, newGrid.innerHTML, pageNum, hasNext, hasPrev);
+      } catch (err) {
+        console.error('Pagination fetch error:', err);
+        /* Restore buttons on error */
+        const ctrlEl = document.getElementById('pagination-controls');
+        btnPrev.disabled = ctrlEl ? ctrlEl.dataset.hasPrev !== 'true' : true;
+        btnNext.disabled = ctrlEl ? ctrlEl.dataset.hasNext !== 'true' : true;
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    btnNext.addEventListener('click', () => loadPage('next'));
+    btnPrev.addEventListener('click', () => loadPage('prev'));
+
+    /* Handle browser back/forward */
+    window.addEventListener('popstate', e => {
+      if (e.state && typeof e.state.page === 'number') {
+        const dir = e.state.page > currentPage ? 'next' : 'prev';
+        loadPage(dir);
+      }
+    });
+  })();
 </script>
 
 </body>
