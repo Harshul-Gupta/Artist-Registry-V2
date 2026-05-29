@@ -76,7 +76,7 @@ public class ArtistController {
 // 	More production type search using MongoDB Lucene    
     
     @GetMapping("/search")
-    public String tSearch(@RequestParam(required = false) String name, 
+    public String search(@RequestParam(required = false) String name, 
     					@RequestParam(required= false) String genre ,
     					@RequestParam(defaultValue = "0") int page , Model model)
     {
