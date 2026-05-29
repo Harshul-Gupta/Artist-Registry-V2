@@ -1,2 +1,3 @@
 # Artist-Registery
-Created an Artist Registery on Spring Boot utilizing Spring technologies (i.e Spring JPA, Spring MVC etc.) to explore how to develop and test an enterprise level CRUD application
+Created Artist Registery on Spring Boot utilizing Spring Boot to learn more comprehensive features of Spring and wanted to learn how to integrate NoSQL database to create a CRUD application.
+I have used MongoDB as my database to underastand how to use it with my web app
