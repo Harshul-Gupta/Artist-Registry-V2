@@ -95,6 +95,12 @@ public class ArtistController {
         return "artists"; // resolves to /WEB-INF/views/artists.jsp
     }
 
+    @GetMapping("/add")
+    public String showAddArtistForm() {
+        return "addArtist";
+    }
+    
+    
     /**
      * Serves a single-artist detail page at "/artist/{id}".
      * Populates ${artist} for EL expressions like ${artist.name}, ${artist.country}, etc.

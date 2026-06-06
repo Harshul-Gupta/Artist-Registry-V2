@@ -7,6 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Resonance — Music Artist Registry</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
@@ -215,6 +216,44 @@
     footer a:hover { opacity: 1; }
 
     .no-results-hidden { display: none; }
+
+    /* DROPDOWN */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 0.84rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.48rem 0.88rem; border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+      display: flex; align-items: center; gap: 5px; cursor: pointer;
+      background: none; border: none; font-family: 'DM Sans', sans-serif;
+    }
+    .nav-dropdown-toggle:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .nav-dropdown-toggle svg { transition: transform 0.22s; }
+    .nav-dropdown.open .nav-dropdown-toggle svg { transform: rotate(180deg); }
+    .nav-dropdown-menu {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      min-width: 200px;
+      background: rgba(12,5,8,0.92);
+      backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 0.5rem;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,48,42,0.06);
+      opacity: 0; pointer-events: none; transform: translateY(-6px);
+      transition: opacity 0.22s, transform 0.22s;
+      z-index: 500;
+    }
+    .nav-dropdown.open .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 0.84rem; font-weight: 500; letter-spacing: 0.04em;
+      padding: 0.6rem 0.85rem; border-radius: 9px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .dropdown-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+    .dropdown-item svg { color: var(--red-light); flex-shrink: 0; }
+    .dropdown-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0.3rem 0.5rem; }
   </style>
 </head>
 <body>
@@ -239,6 +278,23 @@
       <ul class="nav-links">
         <li><a href="#">About</a></li>
         <li><a href="#">Genres</a></li>
+        <li class="nav-dropdown" id="register-dropdown">
+          <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" id="register-toggle">
+            Register
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown-menu" role="menu">
+            <a href="${pageContext.request.contextPath}/add" class="dropdown-item" role="menuitem">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+              Add Artist
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="${pageContext.request.contextPath}/artists" class="dropdown-item" role="menuitem">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Browse Library
+            </a>
+          </div>
+        </li>
         <li>
           <a href="${pageContext.request.contextPath}/artists" class="btn-library">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -384,6 +440,19 @@
       if (nameVal) document.getElementById('search-form').submit();
     });
   });
+  /* ── Register dropdown toggle ── */
+  const registerDropdown = document.getElementById('register-dropdown');
+  const registerToggle   = document.getElementById('register-toggle');
+  registerToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = registerDropdown.classList.toggle('open');
+    registerToggle.setAttribute('aria-expanded', isOpen);
+  });
+  document.addEventListener('click', () => {
+    registerDropdown.classList.remove('open');
+    registerToggle.setAttribute('aria-expanded', 'false');
+  });
+  registerDropdown.addEventListener('click', e => e.stopPropagation());
 </script>
 
 </body>

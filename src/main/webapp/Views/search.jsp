@@ -298,31 +298,6 @@
       color: var(--text-muted); letter-spacing: 0.05em;
     }
 
-    /* Selection ring */
-    .hero-tile.selected .tile-photo-wrap {
-      box-shadow: 0 0 0 3px var(--red), 0 16px 48px rgba(232,48,42,0.30);
-    }
-
-    /* Selection indicator — sits at top-right of photo circle */
-    .tile-select-indicator {
-      position: absolute; top: 6px; right: 6px; z-index: 10;
-      width: 22px; height: 22px; border-radius: 50%;
-      background: rgba(232,48,42,0.14); border: 1.5px solid rgba(232,48,42,0.30);
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.25s;
-      opacity: 0;
-    }
-    .hero-tile:hover .tile-select-indicator,
-    .hero-tile.selected .tile-select-indicator { opacity: 1; }
-    .hero-tile.selected .tile-select-indicator {
-      background: var(--red); border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(232,48,42,0.20);
-    }
-    .tile-check { display: none; }
-    .hero-tile.selected .tile-check { display: block; }
-    .tile-uncheck { display: block; }
-    .hero-tile.selected .tile-uncheck { display: none; }
-
     /* Section label above the grid */
     .section-label {
       font-family: 'Syne', sans-serif;
@@ -354,31 +329,6 @@
     .empty-state p { color: var(--text-secondary); font-size: 0.92rem; max-width: 360px; line-height: 1.72; margin-bottom: 2rem; }
     .btn-back { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(232,48,42,0.14), rgba(155,26,21,0.10)); border: 1px solid rgba(232,48,42,0.32); color: var(--red-light); font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.75rem 1.6rem; border-radius: 100px; transition: all 0.28s; }
     .btn-back:hover { background: linear-gradient(135deg, rgba(232,48,42,0.26), rgba(155,26,21,0.22)); border-color: rgba(232,48,42,0.6); color: #fff; transform: translateY(-2px); }
-
-    /* ── SELECTION BAR ── */
-    .selection-bar {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
-      z-index: 400;
-      background: rgba(12,5,8,0.88); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(232,48,42,0.28);
-      border-radius: 100px;
-      padding: 0.7rem 0.7rem 0.7rem 1.4rem;
-      display: flex; align-items: center; gap: 1rem;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,48,42,0.08);
-      transition: transform 0.4s cubic-bezier(.22,1,.36,1), opacity 0.3s;
-      opacity: 0; pointer-events: none;
-    }
-    .selection-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
-    .sel-count { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.06em; white-space: nowrap; }
-    .sel-count strong { color: var(--red-light); font-size: 1rem; font-family: 'Cormorant Garamond', serif; font-weight: 400; margin-right: 3px; }
-    .sel-clear { font-size: 0.72rem; color: var(--text-muted); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0.2rem 0.4rem; border-radius: 4px; transition: color 0.2s; }
-    .sel-clear:hover { color: var(--text-secondary); }
-    .sel-actions { display: flex; gap: 0.4rem; }
-    .btn-sel-action { font-family: 'Syne', sans-serif; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 100px; padding: 0.6rem 1.2rem; cursor: pointer; transition: all 0.22s; }
-    .btn-sel-action.secondary { background: rgba(255,255,255,0.07); color: var(--text-secondary); }
-    .btn-sel-action.secondary:hover { background: rgba(255,255,255,0.12); color: var(--text-primary); }
-    .btn-sel-action.primary { background: linear-gradient(135deg, #e8302a, #9b1a15); color: #fff; box-shadow: 0 4px 16px rgba(232,48,42,0.30); }
-    .btn-sel-action.primary:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,48,42,0.42); }
 
     footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 2rem 0; text-align: center; }
     footer p { font-size: .8rem; color: var(--text-muted); }
@@ -584,7 +534,6 @@
       <div class="section-header-row">
         <div class="section-label">
           Artists
-          <span class="section-label-count">${fn:length(artists.content)} result${fn:length(artists.content) ne 1 ? 's' : ''}</span>
         </div>
         <div class="pagination-controls"
              id="pagination-controls"
@@ -651,7 +600,7 @@
           <c:forEach var="artist" items="${artists.content}" varStatus="status">
             <c:set var="delay" value="${status.index * 45 > 360 ? 360 : status.index * 45}" />
 
-            <a href="#"
+            <a href="${pageContext.request.contextPath}/artist-details?id=${artist.mongoId}"
                class="hero-tile"
                style="animation-delay:${delay}ms"
                role="listitem"
@@ -663,10 +612,13 @@
 
                 <c:choose>
                   <c:when test="${not empty artist.imageURL}">
-                    <img class="tile-avatar"
-                         src="${artist.imageURL}"
-                         alt="${fn:escapeXml(artist.name)}"
-                         loading="lazy" />
+                  <img class="tile-avatar"
+    				 src="${artist.imageURL}"
+				     alt="${fn:escapeXml(artist.name)}"
+				     width="200" height="200"
+				     loading="lazy"
+				     decoding="async"
+				     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
                   </c:when>
                   <c:otherwise>
                     <div class="tile-avatar-monogram" aria-hidden="true">
@@ -674,12 +626,6 @@
                     </div>
                   </c:otherwise>
                 </c:choose>
-
-                <%-- Selection indicator (top-right of circle) --%>
-                <div class="tile-select-indicator" aria-hidden="true">
-                  <svg class="tile-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  <svg class="tile-uncheck" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,250,0.45)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </div>
 
               </div>
 
@@ -723,16 +669,6 @@
   </div>
 </main>
 
-<%-- Floating selection action bar (appears when ≥ 1 tile is selected) --%>
-<div class="selection-bar" id="selection-bar" aria-live="polite" aria-label="Selection actions">
-  <div class="sel-count"><strong id="sel-count-num">0</strong> selected</div>
-  <button class="sel-clear" id="sel-clear-btn" aria-label="Clear selection">Clear</button>
-  <div class="sel-actions">
-    <button class="btn-sel-action secondary" id="sel-compare-btn">Compare</button>
-    <button class="btn-sel-action primary" id="sel-view-btn">View Selected</button>
-  </div>
-</div>
-
 <footer>
   <div class="wrapper">
     <p>Resonance Music Artist Registry &nbsp;&middot;&nbsp; <a href="#">API Docs</a> &nbsp;&middot;&nbsp; <a href="#">Privacy</a></p>
@@ -763,48 +699,6 @@
 
   /* ── Mouse glare on hero tiles (disabled — no glare element in new layout) ── */
   /* document.querySelectorAll('.hero-tile').forEach(tile => { ... }); */
-
-  /* ── Tile selection ── */
-  const selectionBar  = document.getElementById('selection-bar');
-  const selCountNum   = document.getElementById('sel-count-num');
-  const selClearBtn   = document.getElementById('sel-clear-btn');
-  const selectedIds   = new Set();
-
-  function updateSelectionBar() {
-    const n = selectedIds.size;
-    selCountNum.textContent = n;
-    selectionBar.classList.toggle('visible', n > 0);
-  }
-
-  document.querySelectorAll('.hero-tile').forEach(tile => {
-    tile.addEventListener('click', e => {
-      e.preventDefault(); // href="#" — no navigation yet
-      const id = tile.dataset.id;
-      if (selectedIds.has(id)) {
-        selectedIds.delete(id);
-        tile.classList.remove('selected');
-      } else {
-        selectedIds.add(id);
-        tile.classList.add('selected');
-      }
-      updateSelectionBar();
-    });
-
-    /* Keyboard support */
-    tile.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        tile.click();
-      }
-    });
-    tile.setAttribute('tabindex', '0');
-  });
-
-  selClearBtn.addEventListener('click', () => {
-    selectedIds.clear();
-    document.querySelectorAll('.hero-tile.selected').forEach(t => t.classList.remove('selected'));
-    updateSelectionBar();
-  });
 
   /* ── AJAX Pagination ── */
   (function () {
@@ -839,18 +733,8 @@
         /* Swap the inner HTML */
         grid.innerHTML = newHTML;
 
-        /* Re-attach tile selection listeners on new tiles */
+        /* Re-attach tabindex on new tiles for keyboard nav */
         grid.querySelectorAll('.hero-tile').forEach(tile => {
-          tile.addEventListener('click', e => {
-            e.preventDefault();
-            const id = tile.dataset.id;
-            if (selectedIds.has(id)) { selectedIds.delete(id); tile.classList.remove('selected'); }
-            else                     { selectedIds.add(id);    tile.classList.add('selected');    }
-            updateSelectionBar();
-          });
-          tile.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tile.click(); }
-          });
           tile.setAttribute('tabindex', '0');
         });
 

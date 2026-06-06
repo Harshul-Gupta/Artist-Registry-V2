@@ -18,7 +18,8 @@ public class GlobalExceptionHandler {
 	public String handleRuntimeException(Exception ex, Model model)
 	{
 		log.error("[Critical Failure] System crashed with exception: ", ex);
-		model.addAttribute("errorMessage", ex.getMessage()!=null? ex.getMessage(): "An unexpected error occured. Please try again");
+		model.addAttribute("statusCode", 500);
+		model.addAttribute("errorMessage", "An unexpected error occured. Please try again");
 		return "errors";
 	}
 	

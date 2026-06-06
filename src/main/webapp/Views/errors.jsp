@@ -283,7 +283,6 @@
       when forwarding to an error page via web.xml / ErrorController.
       Fall back to a generic indicator when it is not present.
     --%>
-    <c:set var="statusCode" value="${requestScope['jakarta.servlet.error.status_code']}"/>
     <c:if test="${empty statusCode}">
       <%-- Legacy Servlet API attribute name --%>
       <c:set var="statusCode" value="${requestScope['javax.servlet.error.status_code']}"/>

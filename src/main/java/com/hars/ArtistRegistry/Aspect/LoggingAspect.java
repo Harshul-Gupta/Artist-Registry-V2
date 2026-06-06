@@ -18,7 +18,7 @@ public class LoggingAspect {
 	
 	private static final Logger logger= LoggerFactory.getLogger(LoggingAspect.class);
 	
-	@Before("execution(public * com.hars.ArtistRegistry.Controller.HomeController.getArtist(String)) && args(id)")
+	@After("execution(public * com.hars.ArtistRegistry.Controller.HomeController.getArtist(String)) && args(id)")
 	public void logArtist(String id)
 	{
 		logger.info("getArtist() method called for Artist ID: {}",id);
