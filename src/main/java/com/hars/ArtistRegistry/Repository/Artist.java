@@ -34,6 +34,18 @@ public class Artist {
 	private Set<String> genre = new HashSet<>();
 	
 	private String imageURL;
+	
+	private String spotifyId;
+
+	public String getSpotifyId() {
+		return spotifyId;
+	}
+
+
+	public void setSpotifyId(String spotifyId) {
+		this.spotifyId = spotifyId;
+	}
+
 
 	public String getMongoId() {
 		return mongoId;
