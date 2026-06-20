@@ -522,7 +522,9 @@
       });
 
       if (response.status === 201) {
-        window.location.href = '/';
+    	const savedArtist = await response.json();
+    	  
+        window.location.href = '/artist-details?id=${createdArtist.id}';
       } else {
         const msg = await response.text();
         showError(msg || 'Something went wrong. Please try again.');

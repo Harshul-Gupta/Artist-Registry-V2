@@ -69,10 +69,10 @@
       mask-image: radial-gradient(ellipse 88% 88% at 50% 45%, black 10%, transparent 100%);
     }
 
-    .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .wrapper { position: relative; z-index: 1; max-width: 1250px; margin: 0 auto; padding: 0 2rem; }
 
     /* ── NAV ── */
-    nav {
+     nav {
       position: sticky; top: 0; z-index: 300;
       height: var(--nav-h); display: flex; align-items: center;
       background: rgba(8,3,5,0.45);
@@ -81,16 +81,85 @@
       transition: background 0.45s;
     }
     nav.scrolled { background: rgba(8,3,5,0.82); }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-    .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 0.08em; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
-    .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--red), var(--red-deep)); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .logo-icon svg { width: 16px; height: 16px; fill: #fff; }
-    .logo span { color: var(--red-light); font-style: italic; }
-    .nav-links { display: flex; align-items: center; gap: 0.2rem; list-style: none; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.84rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.48rem 0.88rem; border-radius: 8px; transition: color 0.2s, background 0.2s; }
-    .nav-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-    .nav-links .btn-library { background: linear-gradient(135deg, rgba(232,48,42,0.14), rgba(155,26,21,0.14)); border: 1px solid rgba(232,48,42,0.32); color: var(--red-light); display: flex; align-items: center; gap: 6px; }
-    .nav-links .btn-library:hover { background: linear-gradient(135deg, rgba(232,48,42,0.26), rgba(155,26,21,0.26)); border-color: rgba(232,48,42,0.6); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,48,42,0.18); }
+        .nav-inner {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      align-items: center;
+      width: 100%;
+      gap: 1.5rem;
+    }
+ 
+    /* Iridescent Glass Logo Module */
+    .logo { text-decoration: none; display: flex; align-items: center; gap: 10px; justify-self: start; }
+    .logo-icon { width: 32px; height: 32px; flex-shrink: 0; }
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: linear-gradient(110deg, #c4bfff 0%, #a78bfa 50%, #f0abfc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+  /* Right Controls */
+    .nav-right { display: flex; align-items: center; gap: 1rem; justify-self: end; }
+    .nav-links { display: flex; align-items: center; gap: 0.5rem; list-style: none; }
+    .nav-links a, .nav-dropdown-toggle {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 500px;
+      transition: color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+    }
+    .nav-links a:hover, .nav-dropdown-toggle:hover { color: #ffffff; transform: scale(1.04); }
+    
+    /* Solid High-Contrast Utility Button */
+    .nav-links .btn-library { background: #ffffff; color: #000000; padding: 0.6rem 1.25rem; }
+    .nav-links .btn-library:hover { background: #f6f6f6; color: #000000; transform: scale(1.04); }
+
+  /* DROPDOWNS & PROFILE PANEL */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-menu {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      min-width: 180px; background: #282828; border-radius: 4px; padding: 0.25rem;
+      box-shadow: 0 16px 24px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+      transition: opacity 0.15s; z-index: 500;
+    }
+    .nav-dropdown.open .nav-dropdown-menu { opacity: 1; pointer-events: auto; }
+    .dropdown-item { display: flex; align-items: center; gap: 10px; color: #e5e5e5; text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 0.6rem 0.85rem; border-radius: 2px; transition: background 0.2s; }
+    .dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
+    
+    .user-dropdown { position: relative; }
+    .user-avatar-btn {
+      display: flex; align-items: center; gap: 0.5rem; background: #000000;
+      border-radius: 500px; padding: 3px 8px 3px 3px; cursor: pointer;
+    }
+    .user-avatar-btn:hover { background: var(--spotify-hover); }
+    .avatar-circle { width: 28px; height: 28px; border-radius: 50%; background: #535353; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; }
+    .user-avatar-btn .user-name { font-size: 0.88rem; font-weight: 700; color: #ffffff; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-avatar-btn svg { color: var(--text-secondary); }
+
+    .user-dropdown-menu {
+      position: absolute; top: calc(100% + 10px); right: 0; min-width: 190px;
+      background: #282828; border-radius: 4px; padding: 0.25rem;
+      box-shadow: 0 16px 24px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; z-index: 500;
+    }
+    .user-dropdown.open .user-dropdown-menu { opacity: 1; pointer-events: auto; }
+    .signout-item { display: flex; align-items: center; gap: 10px; color: #e5e5e5; text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 0.6rem 0.85rem; border-radius: 2px; background: none; border: none; font-family: 'DM Sans', sans-serif; width: 100%; cursor: pointer; }
+    .signout-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
 
     /* ── SEARCH BAR ── */
     .search-bar-zone {
@@ -169,7 +238,6 @@
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
     }
 
-    /* ── ARTIST GRID (Apple Music-style) ── */
     .tiles-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -441,24 +509,72 @@
 
 <%-- NAV --%>
 <nav id="main-nav">
-  <div class="wrapper">
+  <div class="wrapper" style="width:100%;">
     <div class="nav-inner">
+      
+      <!-- Left: Brand Logo Container -->
       <a href="${pageContext.request.contextPath}/" class="logo">
-        <div class="logo-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18A9 9 0 0012 3zm0 2a7 7 0 110 14A7 7 0 0112 5zm-1 3v5.586l-2.707 2.707 1.414 1.414L13 15.414V8h-2z"/></svg>
-        </div>
-        Reso<span>Nance</span>
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" stroke="url(#bgi)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="9"  stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+          <circle cx="16" cy="16" r="3"  fill="#a78bfa"/>
+          <defs>
+            <linearGradient id="bgi" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#7b6cff"/>
+              <stop offset="1" stop-color="#f43f8e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-name">Resonance</span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#">About</a></li>
-        <li><a href="#">Genres</a></li>
-        <li>
-          <a href="${pageContext.request.contextPath}/artists" class="btn-library">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Artist Library
-          </a>
-        </li>
-      </ul>
+
+      <!-- Center: Streamlined Integrated Search Input Module -->
+      <div class="nav-center" role="search"></div>
+
+      <!-- Right: Navigation Options & Profile Routing -->
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li class="nav-dropdown" id="register-dropdown">
+            <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" id="register-toggle">
+              Register
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="nav-dropdown-menu" role="menu">
+              <a href="${pageContext.request.contextPath}/add" class="dropdown-item" role="menuitem">Add Artist</a>
+            </div>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/artists" class="btn-library">
+               Library
+            </a>
+          </li>
+        </ul>
+
+        <c:if test="${not empty currentUser}">
+          <div class="user-dropdown" id="user-dropdown">
+            <button class="user-avatar-btn" id="user-toggle" aria-haspopup="true" aria-expanded="false">
+              <div class="avatar-circle" aria-hidden="true">
+                <c:choose>
+                  <c:when test="${not empty currentUser.getInitials()}">${fn:escapeXml(currentUser.getInitials())}</c:when>
+                  <c:otherwise>${fn:substring(fn:escapeXml(currentUser.getUsername()), 0, 2)}</c:otherwise>
+                </c:choose>
+              </div>
+              <span class="user-name">${fn:escapeXml(currentUser.getUsername())}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            <div class="user-dropdown-menu" id="user-menu" role="menu">
+              <a href="${pageContext.request.contextPath}/profile" class="dropdown-item" role="menuitem">Profile</a>
+              <form method="post" action="${pageContext.request.contextPath}/logout" style="display:contents;">
+                <button type="submit" class="signout-item" role="menuitem">Log out</button>
+              </form>
+            </div>
+          </div>
+        </c:if>
+      </div>
+
     </div>
   </div>
 </nav>
@@ -676,6 +792,51 @@
 </footer>
 
 <script>
+
+//── Navbar Dropdowns Toggle ──
+const registerDropdown = document.getElementById('register-dropdown');
+const registerToggle   = document.getElementById('register-toggle');
+const userDropdown     = document.getElementById('user-dropdown');
+const userToggle       = document.getElementById('user-toggle');
+
+// Toggle Register Dropdown
+if (registerToggle && registerDropdown) {
+  registerToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = registerDropdown.classList.toggle('open');
+    registerToggle.setAttribute('aria-expanded', isOpen);
+    if (userDropdown) {
+      userDropdown.classList.remove('open');
+      if (userToggle) userToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+	// Toggle User Dropdown (Safely checks if user is logged in first)
+	if (userToggle && userDropdown) {
+	  userToggle.addEventListener('click', (e) => {
+	    e.stopPropagation();
+	    const isOpen = userDropdown.classList.toggle('open');
+	    userToggle.setAttribute('aria-expanded', isOpen);
+	    if (registerDropdown) {
+	      registerDropdown.classList.remove('open');
+	      registerToggle.setAttribute('aria-expanded', 'false');
+	    }
+	  });
+	}
+	
+	// Close open dropdowns if the user clicks anywhere else on the page
+	document.addEventListener('click', () => {
+	  if (registerDropdown) {
+	    registerDropdown.classList.remove('open');
+	    if (registerToggle) registerToggle.setAttribute('aria-expanded', 'false');
+	  }
+	  if (userDropdown) {
+	    userDropdown.classList.remove('open');
+	    if (userToggle) userToggle.setAttribute('aria-expanded', 'false');
+	  }
+	});
+
   /* ── Scroll effects ── */
   const nav        = document.getElementById('main-nav');
   const searchZone = document.getElementById('search-zone');

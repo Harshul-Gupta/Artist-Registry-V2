@@ -14,8 +14,8 @@ public class GlobalExceptionHandler {
 	
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	
-	@ExceptionHandler(Exception.class)
-	public String handleRuntimeException(Exception ex, Model model)
+	@ExceptionHandler(RuntimeException.class)
+	public String handleRuntimeException(RuntimeException ex, Model model)
 	{
 		log.error("[Critical Failure] System crashed with exception: ", ex);
 		model.addAttribute("statusCode", 500);

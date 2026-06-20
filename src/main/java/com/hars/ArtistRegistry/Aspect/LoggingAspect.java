@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+import com.hars.ArtistRegistry.Repository.Artist;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,20 @@ public class LoggingAspect {
 	{
 		logger.info("getArtist() method called for Artist ID: {}",id);
 	}
+	
+	 @After("execution(public * com.hars.ArtistRegistry.Controller.HomeController.addArtist(..))")
+	    public void logSave(JoinPoint joinPoint) {
+	        // Grab the actual runtime argument array passed to the method
+	        Object[] args = joinPoint.getArgs();
+	        
+	        if (args != null && args.length > 0) {
+	            // Check if the first parameter is an instance of your Artist model
+	            if (args[0] instanceof Artist) {
+	                Artist artist = (Artist) args[0];
+	                logger.info("Artist: {} added", artist.getName());
+	            }
+	        }
+	 }
 	
 	@After("execution(public * com.hars.ArtistRegistry.Controller.ArtistController.indexPage(..))")
 	public void logHome()

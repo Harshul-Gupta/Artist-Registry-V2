@@ -32,16 +32,16 @@ public class HomeController {
 	
 	
 	@GetMapping("{id}")
-	public ResponseEntity<Map<String, Object>> getArtist(@PathVariable String id)
+	public ResponseEntity<Artist> getArtist(@PathVariable String id)
 	{
+		//3rd Part Rapid API to fetch Spotify Monthly listeners deprecated as it is a learning project 
+		//Long liveListeners= spotifyService.getMonthlyListeners(artist.getSpotifyId());
+		//Map<String, Object> response = new HashMap<>();
+		//response.put("monthlyListeners", liveListeners);
+        //response.put("artist", artist);
 		Artist artist= repo.findById(id).orElse(null);
-		
-		Long liveListeners= spotifyService.getMonthlyListeners(artist.getSpotifyId());
-		
-		Map<String, Object> response = new HashMap<>();
-        response.put("artist", artist);
-        response.put("monthlyListeners", liveListeners);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+        
+		return new ResponseEntity<>(artist, HttpStatus.OK);
 	}
 	
 	@PostMapping(value= "/send")

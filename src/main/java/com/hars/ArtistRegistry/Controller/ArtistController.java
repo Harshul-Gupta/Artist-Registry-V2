@@ -94,12 +94,23 @@ public class ArtistController {
         model.addAttribute("stats",   buildStats());
         return "artists"; // resolves to /WEB-INF/views/artists.jsp
     }
+    
+    @GetMapping("artist-details")
+    public String getArtistDetails()
+    {
+    	return "Artist";
+    }
 
     @GetMapping("/add")
     public String showAddArtistForm() {
         return "addArtist";
     }
     
+    @RequestMapping("/login")
+    public String loginUser()
+    {
+    	return "login";
+    }
     
     /**
      * Serves a single-artist detail page at "/artist/{id}".

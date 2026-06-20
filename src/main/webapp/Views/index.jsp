@@ -10,7 +10,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,13 +22,13 @@
       --blue-light: #60a5fa;
       --blue-deep:  #1e3a8a;
       --grad:       linear-gradient(135deg, var(--red) 0%, #8b2be2 50%, var(--blue) 100%);
-      --grad-text:  linear-gradient(100deg, var(--red-light) 0%, #c084fc 50%, var(--blue-light) 100%);
-      --glass-bg:   rgba(255,255,255,0.038);
-      --glass-border: rgba(255,255,255,0.09);
-      --text-primary:   #f0eefa;
-      --text-secondary: rgba(240,238,250,0.52);
-      --text-muted:     rgba(240,238,250,0.28);
-      --nav-h: 66px;
+      --text-primary:   #ffffff;
+      --text-secondary: #b3b3b3;
+      --text-muted:     #727272;
+      --spotify-dark:   #121212;
+      --spotify-input:  #242424;
+      --spotify-hover:  #2a2a2a;
+      --nav-h: 72px;
     }
 
     html { scroll-behavior: smooth; }
@@ -36,9 +36,8 @@
     body {
       min-height: 100vh;
       background: #07050f;
-      background-image: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(120,10,8,0.55) 0%, transparent 60%),
-                        radial-gradient(ellipse 70% 55% at 88% 85%, rgba(20,40,160,0.45) 0%, transparent 60%),
-                        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(80,15,120,0.18) 0%, transparent 70%);
+      background-image: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(120,10,8,0.4) 0%, transparent 60%),
+                        radial-gradient(ellipse 70% 55% at 88% 85%, rgba(20,40,160,0.35) 0%, transparent 60%);
       color: var(--text-primary);
       font-family: 'DM Sans', sans-serif;
       font-size: 15px; line-height: 1.6;
@@ -47,329 +46,275 @@
 
     .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
     .orb { position: absolute; border-radius: 50%; filter: blur(140px); animation: drift 22s ease-in-out infinite alternate; }
-    .orb-1 { width: 820px; height: 820px; background: #8b0a06; opacity:.24; top:-300px; left:-240px; animation-duration:24s; }
-    .orb-2 { width: 600px; height: 600px; background: #0d2fa8; opacity:.22; bottom:-160px; right:-140px; animation-duration:30s; animation-delay:-10s; }
-    .orb-3 { width: 420px; height: 420px; background: #6b1fa8; opacity:.18; top:38%; left:50%; animation-duration:26s; animation-delay:-6s; }
-    .orb-4 { width: 300px; height: 300px; background: #c41612; opacity:.16; bottom:28%; left:7%; animation-duration:34s; animation-delay:-16s; }
+    .orb-1 { width: 820px; height: 820px; background: #8b0a06; opacity:.15; top:-300px; left:-240px; }
     @keyframes drift {
       0%   { transform: translate(0,0) scale(1); }
-      33%  { transform: translate(45px,-38px) scale(1.06); }
-      66%  { transform: translate(-32px,52px) scale(0.96); }
-      100% { transform: translate(22px,-22px) scale(1.03); }
-    }
-    .bg-canvas::after {
-  content: ''; 
-  position: absolute; 
-  inset: 0;
-  /* Fixed: Swapped internal single quotes and ensured data URI parsing integrity */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  opacity: .45;
-}
-    .grid-lines {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(ellipse 88% 88% at 50% 45%, black 10%, transparent 100%);
+      100% { transform: translate(30px,-20px) scale(1.03); }
     }
 
-    .wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .wrapper { position: relative; z-index: 1; max-width: 1250px; margin: 0 auto; padding: 0 2rem; }
 
-    /* NAV */
+    /* SPOTIFY NAV STYLES */
     nav {
       position: sticky; top: 0; z-index: 300;
       height: var(--nav-h); display: flex; align-items: center;
-      background: rgba(8,3,5,0.45);
-      backdrop-filter: blur(28px) saturate(160%);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      transition: background 0.45s;
+      background: #000000;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    nav.scrolled { background: rgba(8,3,5,0.82); }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-    .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 0.08em; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
-    .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--red), var(--red-deep)); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .logo-icon svg { width: 16px; height: 16px; fill: #fff; }
-    .logo span { color: var(--red-light); font-style: italic; }
-    .nav-links { display: flex; align-items: center; gap: 0.2rem; list-style: none; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.84rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.48rem 0.88rem; border-radius: 8px; transition: color 0.2s, background 0.2s; }
-    .nav-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-    .nav-links .btn-library { background: linear-gradient(135deg, rgba(232,48,42,0.14), rgba(155,26,21,0.14)); border: 1px solid rgba(232,48,42,0.32); color: var(--red-light); display: flex; align-items: center; gap: 6px; }
-    .nav-links .btn-library:hover { background: linear-gradient(135deg, rgba(232,48,42,0.26), rgba(155,26,21,0.26)); border-color: rgba(232,48,42,0.6); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,48,42,0.18); }
-
-    /* SEARCH BAR */
-    .search-bar-zone {
-      position: sticky; top: var(--nav-h); z-index: 200;
-      display: flex; justify-content: center;
-      padding: 0.9rem 2rem;
-      background: transparent;
-      border-bottom: 1px solid transparent;
-      transition: background 0.5s ease, border-color 0.5s ease, padding 0.4s ease;
+    .nav-inner {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      align-items: center;
+      width: 100%;
+      gap: 1.5rem;
     }
-    .search-bar-zone.scrolled {
-      background: rgba(8,3,5,0.32);
-      border-bottom-color: rgba(255,255,255,0.055);
-      backdrop-filter: blur(22px) saturate(150%);
-      padding: 0.65rem 2rem;
+    
+    /* Iridescent Glass Logo Module */
+    .logo { text-decoration: none; display: flex; align-items: center; gap: 10px; justify-self: start; }
+    .logo-icon { width: 32px; height: 32px; flex-shrink: 0; }
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: linear-gradient(110deg, #c4bfff 0%, #a78bfa 50%, #f0abfc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .search-panel {
-      width: 100%; max-width: 680px;
-      background: rgba(255,255,255,0.048);
-      backdrop-filter: blur(28px) saturate(160%);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 1.1rem 1.4rem 1.25rem;
-      box-shadow: 0 4px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
-      transition: border-color 0.3s, box-shadow 0.3s, padding 0.4s;
+
+    /* Embedded Central Search Field */
+    .nav-center { display: flex; justify-content: center; width: 100%; }
+    .nav-search-form { width: 100%; max-width: 420px; position: relative; }
+    .nav-search-wrapper { position: relative; display: flex; align-items: center; }
+    .nav-search-icon { position: absolute; left: 14px; color: var(--text-secondary); pointer-events: none; width: 18px; height: 18px; transition: color 0.2s; }
+    .nav-search-input {
+      width: 100%;
+      background: var(--spotify-input);
+      border: 1px solid transparent;
+      border-radius: 500px;
+      color: #ffffff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      padding: 0.65rem 1rem 0.65rem 2.8rem;
+      outline: none;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .search-bar-zone.scrolled .search-panel { padding: 0.82rem 1.4rem 0.92rem; }
-    .search-panel:focus-within { border-color: rgba(232,48,42,0.38); box-shadow: 0 4px 40px rgba(0,0,0,0.35), 0 0 0 3px rgba(232,48,42,0.07), inset 0 1px 0 rgba(255,255,255,0.08); }
-    .search-label {
-      font-family: 'Syne', sans-serif; font-size: 0.66rem; font-weight: 600;
-      letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-muted);
-      display: block; margin-bottom: 0.7rem;
-      max-height: 2em; overflow: hidden;
-      transition: max-height 0.38s ease, opacity 0.3s ease, margin-bottom 0.38s ease;
+    .nav-search-input::placeholder { color: var(--text-muted); }
+    .nav-search-input:hover { background: var(--spotify-hover); }
+    .nav-search-input:focus { background: var(--spotify-hover); border-color: #ffffff; }
+    .nav-search-submit { display: none; }
+
+    /* Right Controls */
+    .nav-right { display: flex; align-items: center; gap: 1rem; justify-self: end; }
+    .nav-links { display: flex; align-items: center; gap: 0.5rem; list-style: none; }
+    .nav-links a, .nav-dropdown-toggle {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 500px;
+      transition: color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
     }
-    .search-bar-zone.scrolled .search-label { max-height: 0; opacity: 0; margin-bottom: 0; }
-    .search-row { display: flex; gap: 0.65rem; }
-    .search-input-wrap { flex: 1; position: relative; }
-    .search-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; width: 17px; height: 17px; transition: color 0.2s; }
-    .search-input-wrap:focus-within svg { color: var(--red-light); }
-    .search-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; color: var(--text-primary); font-family: 'DM Sans', sans-serif; font-size: 0.93rem; padding: 0.76rem 1rem 0.76rem 2.6rem; outline: none; transition: background 0.22s, border-color 0.22s, box-shadow 0.22s; }
-    .search-input::placeholder { color: var(--text-muted); }
-    .search-input:focus { background: rgba(255,255,255,0.08); border-color: rgba(232,48,42,0.38); box-shadow: 0 0 0 3px rgba(232,48,42,0.07); }
-    .btn-search { background: linear-gradient(135deg, #e8302a 0%, #9b1a15 100%); color: #fff; font-family: 'Syne', sans-serif; font-size: 0.79rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: none; border-radius: 11px; padding: 0 1.3rem; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 7px; position: relative; overflow: hidden; transition: transform 0.22s, box-shadow 0.22s, filter 0.22s; }
-    .btn-search::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent); transition: left 0.45s ease; }
-    .btn-search:hover::after { left: 140%; }
-    .btn-search:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,48,42,0.42); filter: brightness(1.1); }
-    .search-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.72rem; }
-    .chip { font-size: 0.7rem; font-family: 'Syne', sans-serif; font-weight: 500; padding: 0.24rem 0.72rem; border-radius: 100px; border: 1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.04); color: var(--text-secondary); cursor: pointer; transition: all 0.2s; user-select: none; }
-    .chip:hover { border-color: rgba(232,48,42,0.4); background: rgba(232,48,42,0.09); color: var(--red-light); }
-    .chip.active { border-color: rgba(232,48,42,0.52); background: rgba(232,48,42,0.12); color: var(--red-light); }
+    .nav-links a:hover, .nav-dropdown-toggle:hover { color: #ffffff; transform: scale(1.04); }
+    
+    /* Solid High-Contrast Utility Button */
+    .nav-links .btn-library { background: #ffffff; color: #000000; padding: 0.6rem 1.25rem; }
+    .nav-links .btn-library:hover { background: #f6f6f6; color: #000000; transform: scale(1.04); }
 
-    /* HERO */
-    .hero { padding: 5.5rem 0 4.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .hero-eyebrow { font-family: 'Syne', sans-serif; font-size: 0.69rem; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--red); margin-bottom: 1.4rem; display: flex; align-items: center; gap: 10px; }
-    .hero-eyebrow::before, .hero-eyebrow::after { content: ''; display: block; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, var(--red)); }
-    .hero-eyebrow::after { background: linear-gradient(90deg, var(--red), transparent); }
-    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.4rem, 7vw, 6.5rem); font-weight: 300; line-height: 1.06; color: var(--text-primary); margin-bottom: 1.35rem; max-width: 760px; }
-    .hero h1 em { font-style: italic; background: linear-gradient(100deg, var(--red-light) 0%, var(--red) 55%, #ff8a80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-sub { font-size: 1rem; color: var(--text-secondary); max-width: 460px; line-height: 1.8; }
-    .parallax-hero { will-change: transform; }
+    /* Standalone Content Genre Row */
+    .genre-filter-row { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .chip { font-size: 0.82rem; font-family: 'DM Sans', sans-serif; font-weight: 700; padding: 0.4rem 1rem; border-radius: 500px; border: none; background: #232323; color: #ffffff; cursor: pointer; transition: background 0.2s; user-select: none; }
+    .chip:hover { background: #2a2a2a; }
+    .chip.active { background: #ffffff; color: #000000; }
 
-    /* RESULTS */
-    #results-section { padding: 3rem 0; }
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .results-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; }
-    .results-count { font-size: 0.79rem; color: var(--text-muted); font-family: 'Syne', sans-serif; }
-    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 1.15rem; }
+    /* HERO SECTION */
+    .hero { padding: 6rem 0 3.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero-eyebrow { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--red-light); margin-bottom: 1.2rem; }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.2rem, 6vw, 5.5rem); font-weight: 300; line-height: 1.1; color: var(--text-primary); margin-bottom: 1.3rem; max-width: 800px; }
+    .hero h1 em { font-style: italic; background: linear-gradient(100deg, #c4bfff 0%, #f0abfc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 1.05rem; color: var(--text-secondary); max-width: 520px; line-height: 1.7; }
 
-    /* ARTIST CARD */
-    .artist-card { background: rgba(255,255,255,0.038); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.45rem; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 1rem; animation: fadeUp .45s ease both; transition: transform 0.38s cubic-bezier(.22,1,.36,1), border-color 0.35s, box-shadow 0.35s; }
-    .artist-card::before { content: ''; position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(135deg, rgba(232,48,42,0.07) 0%, rgba(155,26,21,0.05) 60%, rgba(255,107,96,0.04) 100%); opacity: 0; transition: opacity 0.35s; }
-    .glare { position: absolute; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,0.055) 0%, transparent 68%); width: 180px; height: 180px; transform: translate(-50%,-50%); opacity: 0; transition: opacity 0.28s; }
-    .artist-card:hover { transform: translateY(-6px) scale(1.013); border-color: rgba(232,48,42,0.28); box-shadow: 0 24px 60px rgba(0,0,0,0.48), 0 0 0 1px rgba(232,48,42,0.1), inset 0 1px 0 rgba(255,255,255,0.09); }
-    .artist-card:hover::before { opacity: 1; }
-    .artist-card:hover .glare { opacity: 1; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(22px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
-    .artist-avatar { width: 52px; height: 52px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; background: linear-gradient(135deg, rgba(232,48,42,0.18), rgba(155,26,21,0.18)); border: 1px solid rgba(232,48,42,0.18); flex-shrink: 0; transition: transform 0.3s, border-color 0.3s; }
-    .artist-card:hover .artist-avatar { transform: scale(1.08); border-color: rgba(232,48,42,0.38); }
-    .artist-info { flex: 1; }
-    .artist-name { font-family: 'Cormorant Garamond', serif; font-size: 1.18rem; font-weight: 400; color: var(--text-primary); margin-bottom: 0.2rem; }
-    .artist-genre { font-size: 0.72rem; color: var(--red-light); font-family: 'Syne', sans-serif; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 0.32rem; }
-    .artist-meta { font-size: 0.8rem; color: var(--text-secondary); }
-    .artist-card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.055); padding-top: 0.72rem; }
-    .artist-tag { font-size: 0.68rem; padding: 0.16rem 0.56rem; background: rgba(255,255,255,0.055); border-radius: 100px; color: var(--text-secondary); }
-    .arrow-btn { width: 27px; height: 27px; border-radius: 50%; background: rgba(232,48,42,0.1); border: 1px solid rgba(232,48,42,0.22); display: flex; align-items: center; justify-content: center; transition: all 0.24s; }
-    .artist-card:hover .arrow-btn { background: rgba(232,48,42,0.22); border-color: rgba(232,48,42,0.52); transform: translateX(3px); }
-    .state-box { grid-column:1/-1; text-align:center; padding:3rem 1rem; }
-    .state-box p { color: var(--text-secondary); font-size: .95rem; }
-    .state-icon { width:52px; height:52px; border-radius:13px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; }
-
-    /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.75s ease, transform 0.75s ease; }
-    .reveal.in-view { opacity: 1; transform: translateY(0); }
-    .reveal-d1 { transition-delay: 0.10s; }
-    .reveal-d2 { transition-delay: 0.22s; }
-    .reveal-d3 { transition-delay: 0.34s; }
-
-    /* CTA */
-    .cta-section { padding: 5rem 0 8rem; text-align: center; }
-    .cta-card { background: rgba(10,4,4,0.72); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; padding: 4.5rem 3rem; position: relative; overflow: hidden; max-width: 720px; margin: 0 auto; transition: border-color 0.4s, box-shadow 0.4s; }
-    .cta-card::before { content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px; background: linear-gradient(90deg, transparent, rgba(232,48,42,0.6), rgba(255,107,96,0.4), transparent); }
-    .cta-card::after { content: ''; position: absolute; inset: 0; border-radius: 26px; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(155,26,21,0.10) 0%, transparent 70%); pointer-events: none; }
-    .cta-card:hover { border-color: rgba(232,48,42,0.20); box-shadow: 0 30px 80px rgba(155,26,21,0.14), 0 0 0 1px rgba(232,48,42,0.07); }
-    .cta-card h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.18; margin-bottom: 1rem; position: relative; z-index: 1; }
-    .cta-card h2 em { font-style: italic; background: linear-gradient(100deg, var(--red-light), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .cta-card p { color: var(--text-secondary); font-size: .95rem; max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.78; position: relative; z-index: 1; }
-    .btn-cta { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, rgba(232,48,42,0.18), rgba(155,26,21,0.14)); border: 1px solid rgba(232,48,42,0.38); color: var(--red-light); font-family: 'Syne', sans-serif; font-size: .88rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 1rem 2.25rem; border-radius: 100px; transition: all 0.3s; position: relative; z-index: 1; }
-    .btn-cta:hover { background: linear-gradient(135deg, rgba(232,48,42,0.32), rgba(155,26,21,0.28)); border-color: rgba(232,48,42,0.68); color: #fff; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(232,48,42,0.25); }
-    .btn-cta svg { transition: transform 0.22s; }
-    .btn-cta:hover svg { transform: translateX(5px); }
-    .cta-stats { display: flex; justify-content: center; gap: 3.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.07); position: relative; z-index: 1; }
-    .stat-item { text-align: center; }
-    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 2.35rem; font-weight: 300; color: var(--text-primary); display: block; }
-    .stat-label { font-size: .7rem; color: var(--text-muted); font-family: 'Syne', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
-
-    footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 2rem 0; text-align: center; }
-    footer p { font-size: .8rem; color: var(--text-muted); }
-    footer a { color: var(--red); text-decoration: none; opacity: .72; }
-    footer a:hover { opacity: 1; }
-
-    .no-results-hidden { display: none; }
-
-    /* DROPDOWN */
+    /* DROPDOWNS & PROFILE PANEL */
     .nav-dropdown { position: relative; }
-    .nav-dropdown-toggle {
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 0.84rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 0.48rem 0.88rem; border-radius: 8px;
-      transition: color 0.2s, background 0.2s;
-      display: flex; align-items: center; gap: 5px; cursor: pointer;
-      background: none; border: none; font-family: 'DM Sans', sans-serif;
-    }
-    .nav-dropdown-toggle:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-    .nav-dropdown-toggle svg { transition: transform 0.22s; }
-    .nav-dropdown.open .nav-dropdown-toggle svg { transform: rotate(180deg); }
     .nav-dropdown-menu {
       position: absolute; top: calc(100% + 10px); right: 0;
-      min-width: 200px;
-      background: rgba(12,5,8,0.92);
-      backdrop-filter: blur(32px) saturate(180%);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 14px;
-      padding: 0.5rem;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,48,42,0.06);
-      opacity: 0; pointer-events: none; transform: translateY(-6px);
-      transition: opacity 0.22s, transform 0.22s;
-      z-index: 500;
+      min-width: 180px; background: #282828; border-radius: 4px; padding: 0.25rem;
+      box-shadow: 0 16px 24px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+      transition: opacity 0.15s; z-index: 500;
     }
-    .nav-dropdown.open .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
-    .dropdown-item {
-      display: flex; align-items: center; gap: 10px;
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 0.84rem; font-weight: 500; letter-spacing: 0.04em;
-      padding: 0.6rem 0.85rem; border-radius: 9px;
-      transition: color 0.2s, background 0.2s;
+    .nav-dropdown.open .nav-dropdown-menu { opacity: 1; pointer-events: auto; }
+    .dropdown-item { display: flex; align-items: center; gap: 10px; color: #e5e5e5; text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 0.6rem 0.85rem; border-radius: 2px; transition: background 0.2s; }
+    .dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
+    
+    .user-dropdown { position: relative; }
+    .user-avatar-btn {
+      display: flex; align-items: center; gap: 0.5rem; background: #000000;
+      border-radius: 500px; padding: 3px 8px 3px 3px; cursor: pointer;
     }
-    .dropdown-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
-    .dropdown-item svg { color: var(--red-light); flex-shrink: 0; }
-    .dropdown-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0.3rem 0.5rem; }
+    .user-avatar-btn:hover { background: var(--spotify-hover); }
+    .avatar-circle { width: 28px; height: 28px; border-radius: 50%; background: #535353; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; }
+    .user-avatar-btn .user-name { font-size: 0.88rem; font-weight: 700; color: #ffffff; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-avatar-btn svg { color: var(--text-secondary); }
+
+    .user-dropdown-menu {
+      position: absolute; top: calc(100% + 10px); right: 0; min-width: 190px;
+      background: #282828; border-radius: 4px; padding: 0.25rem;
+      box-shadow: 0 16px 24px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; z-index: 500;
+    }
+    .user-dropdown.open .user-dropdown-menu { opacity: 1; pointer-events: auto; }
+    .signout-item { display: flex; align-items: center; gap: 10px; color: #e5e5e5; text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 0.6rem 0.85rem; border-radius: 2px; background: none; border: none; font-family: 'DM Sans', sans-serif; width: 100%; cursor: pointer; }
+    .signout-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* CTA FOOTER */
+    .cta-section { padding: 4rem 0 7rem; text-align: center; }
+    .cta-card { background: #121212; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 4rem 2rem; max-width: 760px; margin: 0 auto; }
+    .cta-card h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; margin-bottom: 1rem; }
+    .cta-card p { color: var(--text-secondary); font-size: .95rem; margin-bottom: 2rem; }
+    .btn-cta { display: inline-flex; align-items: center; gap: 8px; background: #ffffff; color: #000000; font-weight: 700; text-decoration: none; padding: 0.8rem 2rem; border-radius: 500px; transition: transform 0.2s; }
+    .btn-cta:hover { transform: scale(1.04); }
+    .cta-stats { display: flex; justify-content: center; gap: 4rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: #fff; display: block; }
+    .stat-label { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+
+    footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 2rem 0; text-align: center; }
+    footer p { font-size: .8rem; color: var(--text-muted); }
+    footer a { color: #fff; text-decoration: none; }
   </style>
 </head>
 <body>
 
 <div class="bg-canvas" aria-hidden="true">
   <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-  <div class="orb orb-4"></div>
 </div>
-<div class="grid-lines" aria-hidden="true"></div>
 
 <nav id="main-nav">
-  <div class="wrapper">
+  <div class="wrapper" style="width:100%;">
     <div class="nav-inner">
+      
+      <!-- Left: Brand Logo Container -->
       <a href="${pageContext.request.contextPath}/" class="logo">
-        <div class="logo-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18A9 9 0 0012 3zm0 2a7 7 0 110 14A7 7 0 0112 5zm-1 3v5.586l-2.707 2.707 1.414 1.414L13 15.414V8h-2z"/></svg>
-        </div>
-        Reso<span>nance</span>
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" stroke="url(#bgi)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="9"  stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+          <circle cx="16" cy="16" r="3"  fill="#a78bfa"/>
+          <defs>
+            <linearGradient id="bgi" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#7b6cff"/>
+              <stop offset="1" stop-color="#f43f8e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-name">Resonance</span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#">About</a></li>
-        <li><a href="#">Genres</a></li>
-        <li class="nav-dropdown" id="register-dropdown">
-          <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" id="register-toggle">
-            Register
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="nav-dropdown-menu" role="menu">
-            <a href="${pageContext.request.contextPath}/add" class="dropdown-item" role="menuitem">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-              Add Artist
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="${pageContext.request.contextPath}/artists" class="dropdown-item" role="menuitem">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              Browse Library
-            </a>
+
+      <!-- Center: Streamlined Integrated Search Input Module -->
+      <div class="nav-center" role="search">
+        <form method="get" action="${pageContext.request.contextPath}/search" id="search-form" class="nav-search-form">
+          <div class="nav-search-wrapper">
+            <svg class="nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input id="search-input"
+                   name="name"
+                   class="nav-search-input"
+                   type="search"
+                   placeholder="What do you want to play?"
+                   autocomplete="off"
+                   aria-label="Search registry"
+                   value="${fn:escapeXml(param.name)}" />
+            <input type="hidden" id="genre-input" name="genre" value="${fn:escapeXml(param.genre)}" />
           </div>
-        </li>
-        <li>
-          <a href="${pageContext.request.contextPath}/artists" class="btn-library">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Artist Library
-          </a>
-        </li>
-      </ul>
+          <button type="submit" class="nav-search-submit">Search</button>
+        </form>
+      </div>
+
+      <!-- Right: Navigation Options & Profile Routing -->
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li class="nav-dropdown" id="register-dropdown">
+            <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" id="register-toggle">
+              Register
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="nav-dropdown-menu" role="menu">
+              <a href="${pageContext.request.contextPath}/add" class="dropdown-item" role="menuitem">Add Artist</a>
+            </div>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/artists" class="btn-library">
+               Library
+            </a>
+          </li>
+        </ul>
+
+        <c:if test="${not empty currentUser}">
+          <div class="user-dropdown" id="user-dropdown">
+            <button class="user-avatar-btn" id="user-toggle" aria-haspopup="true" aria-expanded="false">
+              <div class="avatar-circle" aria-hidden="true">
+                <c:choose>
+                  <c:when test="${not empty currentUser.getInitials()}">${fn:escapeXml(currentUser.getInitials())}</c:when>
+                  <c:otherwise>${fn:substring(fn:escapeXml(currentUser.getUsername()), 0, 2)}</c:otherwise>
+                </c:choose>
+              </div>
+              <span class="user-name">${fn:escapeXml(currentUser.getUsername())}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            <div class="user-dropdown-menu" id="user-menu" role="menu">
+              <a href="${pageContext.request.contextPath}/profile" class="dropdown-item" role="menuitem">Profile</a>
+              <form method="post" action="${pageContext.request.contextPath}/logout" style="display:contents;">
+                <button type="submit" class="signout-item" role="menuitem">Log out</button>
+              </form>
+            </div>
+          </div>
+        </c:if>
+      </div>
+
     </div>
   </div>
 </nav>
 
-<%-- Search form submits GET to /api/artists/search — results returned in ${artists} model attribute --%>
-<div class="search-bar-zone" id="search-zone" role="search">
-  <div class="search-panel">
-    <span class="search-label">Find an Artist</span>
-    <form method="get" action="${pageContext.request.contextPath}/search" id="search-form">
-      <div class="search-row">
-        <div class="search-input-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <%-- Pre-fill input with the last searched value via EL --%>
-          <input id="search-input"
-                 name="name"
-                 class="search-input"
-                 type="search"
-                 placeholder="Artist name, stage name…"
-                 autocomplete="off"
-                 aria-label="Search for an artist by name"
-                 value="${fn:escapeXml(param.name)}" />
-          <%-- Hidden genre field updated by chip JS below --%>
-          <input type="hidden" id="genre-input" name="genre" value="${fn:escapeXml(param.genre)}" />
-        </div>
-        <button type="submit" class="btn-search" id="search-btn" aria-label="Run search">
-          Search
-        </button>
-      </div>
-    </form>
+<main>
+  <div class="wrapper">
 
-    <%-- Genre filter chips — active chip is highlighted via EL comparison --%>
-    <div class="search-filters" role="group" aria-label="Filter by genre">
+    <!-- Standalone Filter Array Location -->
+    <div class="genre-filter-row" role="group" aria-label="Filter genres">
       <button class="chip ${empty param.genre ? 'active' : ''}" data-genre="">All</button>
       <c:forEach var="g" items="${genres}">
         <button class="chip ${param.genre eq g ? 'active' : ''}" data-genre="${g}">${g}</button>
       </c:forEach>
     </div>
-  </div>
-</div>
 
-<main>
-  <div class="wrapper">
+    <section class="hero" id="hero">
+      <div class="hero-eyebrow">Verified Hub</div>
+      <h1>Discover the voices<br />that shape <em>music</em></h1>
+      <p class="hero-sub">Search across thousands of registered profiles — from rising creators to legendary industry institutions.</p>
+    </section>
 
-    <%-- Hero --%>
-    <section class="hero parallax-hero" id="hero" aria-labelledby="hero-heading">
-        <div class="hero-eyebrow" aria-hidden="true">Music Artist Registry</div>
-        <h1 id="hero-heading">Discover the voices<br />that shape <em>music</em></h1>
-        <p class="hero-sub">Search across thousands of registered artists — from rising independents to established names — and explore their stories, genres, and discographies.</p>
-      </section>
-
-    <%-- CTA / Stats section — stats populated from ${stats} model attribute --%>
     <section class="cta-section" aria-labelledby="cta-heading">
-      <div class="cta-card reveal">
-        <h2 id="cta-heading" class="reveal reveal-d1">Explore every<br /><em>registered</em> artist</h2>
-        <p class="reveal reveal-d2">Browse the complete registry — filter by genre, label, country, or debut year. The full catalogue awaits.</p>
-        <div class="reveal reveal-d3">
+      <div class="cta-card">
+        <h2 id="cta-heading">Explore every registered artist</h2>
+        <p>Browse the complete library catalogue — filter by specific sub-genres, production companies, or country codes seamlessly.</p>
+        <div>
           <a href="${pageContext.request.contextPath}/artists" class="btn-cta">
-            Open Artist Library
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-            </svg>
+            Open Library
           </a>
         </div>
 
         <div class="cta-stats">
-          <%-- EL: read directly from ${stats} map set in the model by the controller --%>
           <div class="stat-item">
             <span class="stat-value">${stats.totalArtists != null ? stats.totalArtists : '—'}</span>
             <span class="stat-label">Artists</span>
@@ -391,69 +336,45 @@
 
 <footer>
   <div class="wrapper">
-    <p>Resonance Music Artist Registry &nbsp;&middot;&nbsp; <a href="#">API Docs</a> &nbsp;&middot;&nbsp; <a href="#">Privacy</a></p>
+    <p>&copy; 2026 Resonance Registry &nbsp;&middot;&nbsp; <a href="#">About</a> &nbsp;&middot;&nbsp; <a href="#">Terms</a></p>
   </div>
 </footer>
 
 <script>
-  /* ── Scroll effects ── */
-  const nav        = document.getElementById('main-nav');
-  const searchZone = document.getElementById('search-zone');
-  const parallax   = document.querySelector('.parallax-hero');
-  let ticking = false;
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
-  }, { passive: true });
-
-  function onScroll() {
-    const sy = window.scrollY;
-    nav.classList.toggle('scrolled', sy > 20);
-    searchZone.classList.toggle('scrolled', sy > 60);
-    if (parallax) parallax.style.transform = 'translateY(' + (sy * 0.36) + 'px)';
-    ticking = false;
-  }
-
-  /* ── Scroll reveal ── */
-  const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); } });
-  }, { threshold: 0.14 });
-  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-
-  /* ── Hero entrance ── */
-  const heroEl = document.getElementById('hero');
-  if (heroEl) {
-    heroEl.querySelectorAll('.hero-eyebrow, h1, .hero-sub').forEach((el, i) => {
-      el.style.cssText = 'opacity:0;transform:translateY(18px);transition:opacity .75s ' + (i * 0.15) + 's ease,transform .75s ' + (i * 0.15) + 's ease';
-      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }));
-    });
-  }
-
-  /* ── Genre chips: update hidden input and re-submit form ── */
+  // Filter pill trigger sync
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       document.getElementById('genre-input').value = chip.dataset.genre;
-      /* Auto-submit only if a name is already entered */
-      const nameVal = document.getElementById('search-input').value.trim();
-      if (nameVal) document.getElementById('search-form').submit();
+      document.getElementById('search-form').submit();
     });
   });
-  /* ── Register dropdown toggle ── */
+
+  // Structural Dropdown Components 
   const registerDropdown = document.getElementById('register-dropdown');
   const registerToggle   = document.getElementById('register-toggle');
   registerToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = registerDropdown.classList.toggle('open');
     registerToggle.setAttribute('aria-expanded', isOpen);
+    if(userDropdown) userDropdown.classList.remove('open');
   });
+
+  const userDropdown = document.getElementById('user-dropdown');
+  const userToggle   = document.getElementById('user-toggle');
+  if (userDropdown && userToggle) {
+    userToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = userDropdown.classList.toggle('open');
+      registerDropdown.classList.remove('open');
+    });
+  }
+
   document.addEventListener('click', () => {
     registerDropdown.classList.remove('open');
-    registerToggle.setAttribute('aria-expanded', 'false');
+    if (userDropdown) userDropdown.classList.remove('open');
   });
-  registerDropdown.addEventListener('click', e => e.stopPropagation());
 </script>
-
 </body>
 </html>
