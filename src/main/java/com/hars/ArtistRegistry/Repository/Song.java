@@ -15,19 +15,16 @@ public class Song {
 	private String title;
 	private String album;
 	
-	 @Field("duration_seconds")
+	@Field("duration_seconds")
 	    private int durationSeconds;
 	 
-	  @Field("release_year") // Maps directly to release_year in MongoDB
+	@Field("release_year") // Maps directly to release_year in MongoDB
 	    private int releaseYear;
 	    
-	    @Field("track_number")
-	    private int trackNumber;
-	    
-	    @Field("stream_count")
+	@Field("stream_count")
 	    private long streamCount;
 	    
-	    @Field("cover_art_url")
+	@Field("cover_art_url")
 	    private String coverURL;
 
 		public String getMongoID() {
@@ -76,14 +73,6 @@ public class Song {
 
 		public void setReleaseYear(int releaseYear) {
 			this.releaseYear = releaseYear;
-		}
-
-		public int getTrackNumber() {
-			return trackNumber;
-		}
-
-		public void setTrackNumber(int trackNumber) {
-			this.trackNumber = trackNumber;
 		}
 
 		public long getStreamCount() {

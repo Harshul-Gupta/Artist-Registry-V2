@@ -4,27 +4,24 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.hars.ArtistRegistry.Repository.Artist;
 import com.hars.ArtistRegistry.Repository.ArtistRepo;
 import com.hars.ArtistRegistry.Repository.SearchRepo;
 import com.hars.ArtistRegistry.Repository.SearchRepo.ArtistSlice;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ArtistController {
@@ -84,7 +81,7 @@ public class ArtistController {
     	model.addAttribute("artists", results);  
         return "search";
     }
-    /**
+    /*
      * Serves the full artist-library page at "/artists".
      * Populates ${artists} with every artist for a browse/listing view.
      */
@@ -106,9 +103,29 @@ public class ArtistController {
         return "addArtist";
     }
     
-    @RequestMapping("/login")
-    public String loginUser()
+    @GetMapping("artist/edit/{id}")
+    public String editArtistPage(@PathVariable String id, Model model)
     {
+    	model.addAttribute("artistId", id);
+    	return "editArtist";
+    }
+    
+    @RequestMapping("/login")
+    public String loginUser(@RequestParam(required = false) String error, HttpServletRequest req, Model model)
+    {
+    	if(error!=null)
+    	{
+    		HttpSession session= req.getSession(false);
+    		String errorMessage= "Invalid username or password";
+    		
+    		if(session!=null)
+    		{
+    			Exception ex= (Exception) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+    			if(ex!=null)
+    				errorMessage= ex.getMessage();
+    		}
+		model.addAttribute("error", errorMessage);
+    	}
     	return "login";
     }
     
