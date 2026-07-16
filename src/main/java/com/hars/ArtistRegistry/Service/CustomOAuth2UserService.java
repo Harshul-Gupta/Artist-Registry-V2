@@ -22,7 +22,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	}
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-		System.out.println("====== CUSTOM OAUTH2 USER SERVICE TRIGGERED ======");
 
 		OAuth2User googleUser= super.loadUser(userRequest);
 		User user= processUser(googleUser);

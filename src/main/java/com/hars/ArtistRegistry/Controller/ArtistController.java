@@ -110,6 +110,11 @@ public class ArtistController {
     	return "editArtist";
     }
     
+    @GetMapping("/register")
+    public String registerUser() {
+    	return "registerArtist";
+    }
+    
     @RequestMapping("/login")
     public String loginUser(@RequestParam(required = false) String error, HttpServletRequest req, Model model)
     {

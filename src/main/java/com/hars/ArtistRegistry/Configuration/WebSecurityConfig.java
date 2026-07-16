@@ -43,10 +43,15 @@ public class WebSecurityConfig{
 	}
 	
 	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
 	public AuthenticationProvider authProvider()
 	{
 		DaoAuthenticationProvider provider= new DaoAuthenticationProvider(userDetailsService);
-		provider.setPasswordEncoder(new BCryptPasswordEncoder());
+		provider.setPasswordEncoder(passwordEncoder());
 		return provider;
 	}
 	
@@ -66,9 +71,11 @@ public class WebSecurityConfig{
 		http	
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
-					.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
+					.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
 					.requestMatchers("/login", 
-							"/login",
+							"/WEB_INF/jsp/**",
+							"/register",
+							"/api/artists/user",
 							"/error",
 						    "/jsp/**", 
 						    "/images/**", 

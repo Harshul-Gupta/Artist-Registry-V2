@@ -20,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hars.ArtistRegistry.Repository.Artist;
 import com.hars.ArtistRegistry.Repository.ArtistRepo;
+import com.hars.ArtistRegistry.Repository.UserResponseDTO;
 import com.hars.ArtistRegistry.Service.ArtistService;
+import com.hars.ArtistRegistry.Service.RegisterService;
 import com.hars.ArtistRegistry.Service.S3ImageService;
 import com.hars.ArtistRegistry.Service.SpotifyMetricService;
 
@@ -31,15 +33,17 @@ public class HomeController {
 	private final ArtistRepo repo;
 	private final S3ImageService s3ImageService;
 	private final ArtistService artistService;
+	private final RegisterService registerService;
 	
 	@Autowired
 	private SpotifyMetricService spotifyService;
 	
-	public HomeController(ArtistRepo repo, S3ImageService s3ImageService, ArtistService artistService) {
+	public HomeController(ArtistRepo repo, S3ImageService s3ImageService, ArtistService artistService, RegisterService registerService) {
 		
 		this.repo= repo;
 		this.s3ImageService= s3ImageService;
 		this.artistService= artistService;
+		this.registerService= registerService;
 	}
 	
 	
@@ -55,6 +59,13 @@ public class HomeController {
 		Artist artist= repo.findById(id).orElse(null);
         
 		return new ResponseEntity<>(artist, HttpStatus.OK);
+	}
+	
+	@PostMapping("/user")
+	public ResponseEntity<String> saveUser(@RequestBody UserResponseDTO user)
+	{
+		registerService.registerArtist(user);
+		return ResponseEntity.ok("User created successfuly!");
 	}
 	
 	@PostMapping("/send")

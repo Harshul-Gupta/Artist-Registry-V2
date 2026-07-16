@@ -10,13 +10,16 @@ import jakarta.validation.constraints.NotBlank;
 public class User {
 
 	@Id
-	private String mogoId;
+	private String mongoId;
 	
 	@NotBlank(message = "Username can't be empty")
 	private String username;
 	
-	@NotBlank(message = "Username can't be empty")
+	@NotBlank(message = "Password can't be empty")
 	private String password;
+	
+	@NotBlank(message = "Name can't be empty")
+	private String name;
 	
 	@Email
 	private String email;
@@ -24,11 +27,11 @@ public class User {
 	private String provider;
 	
 	public String getMogoId() {
-		return mogoId;
+		return mongoId;
 	}
 
 	public void setMogoId(String mogoId) {
-		this.mogoId = mogoId;
+		this.mongoId = mogoId;
 	}
 
 	public String getUsername() {
@@ -45,6 +48,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public String getEmail() {
