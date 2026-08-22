@@ -1173,7 +1173,7 @@
 
 								if (response.status === 201) {
 									const savedArtist = await response.json();
-									window.location.href = '${pageContext.request.contextPath}/artist-details?id=' + savedArtist.mongoId;
+									window.location.href = '${pageContext.request.contextPath}/artist-details/' + savedArtist.mongoId;
 								} else {
 									const msg = await response.text();
 									showError(msg || 'Something went wrong. Please try again.');

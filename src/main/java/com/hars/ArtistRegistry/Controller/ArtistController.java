@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.hars.ArtistRegistry.Repository.Artist;
 import com.hars.ArtistRegistry.Repository.ArtistRepo;
 import com.hars.ArtistRegistry.Repository.SearchRepo;
 import com.hars.ArtistRegistry.Repository.SearchRepo.ArtistSlice;
+import com.hars.ArtistRegistry.Service.ArtistService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +33,9 @@ public class ArtistController {
 
     @Autowired
     MongoTemplate mongoTemplate;
+
+    @Autowired
+    ArtistService artistService;
     
     @Autowired
     SearchRepo sRepo;
@@ -85,16 +90,18 @@ public class ArtistController {
      * Serves the full artist-library page at "/artists".
      * Populates ${artists} with every artist for a browse/listing view.
      */
-    @GetMapping("/artists")
-    public String artistLibraryPage(Model model) {
-        model.addAttribute("artists", artistRepo.findAll());
-        model.addAttribute("stats",   buildStats());
-        return "artists"; // resolves to /WEB-INF/views/artists.jsp
-    }
+//    @GetMapping("/artists")
+//    public String artistLibraryPage(Model model) {
+//        model.addAttribute("artists", artistRepo.findAll());
+//        model.addAttribute("stats",   buildStats());
+//        return "artists";
+//    }
     
-    @GetMapping("artist-details")
-    public String getArtistDetails()
+    @GetMapping("artist-details/{artistId}")
+    public String getArtistDetails(@PathVariable String artistId, Model model)
     {
+    	Artist artist = artistRepo.findById(artistId).orElse(null);
+    	model.addAttribute("artist", artist);
     	return "Artist";
     }
 
@@ -115,6 +122,12 @@ public class ArtistController {
     	return "registerArtist";
     }
     
+    @GetMapping("/library")
+    public String libraryPage() 
+    {
+    	return "library";
+    }
+    
     @RequestMapping("/login")
     public String loginUser(@RequestParam(required = false) String error, HttpServletRequest req, Model model)
     {
@@ -133,11 +146,6 @@ public class ArtistController {
     	}
     	return "login";
     }
-    
-    /**
-     * Serves a single-artist detail page at "/artist/{id}".
-     * Populates ${artist} for EL expressions like ${artist.name}, ${artist.country}, etc.
-     */
 
 //     * Keys match the EL expressions used in index.jsp:
 //     *   ${stats.totalArtists}  ${stats.totalGenres}  ${stats.totalCountries}

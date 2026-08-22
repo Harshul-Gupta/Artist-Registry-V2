@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 		<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+			<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 			<!DOCTYPE html>
 			<html lang="en">
 
 			<head>
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-				<title>Artist — Resonance</title>
+				<title><c:if test="${not empty artist.name}"><c:out value="${artist.name}"/> — </c:if>Resonance</title>
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 				<link
@@ -446,9 +447,136 @@
 						line-height: 1.7;
 					}
 
-					/* ── HERO SECTION ── */
+					/* ── HERO SECTION (Spotify-style banner) ── */
 					.artist-hero {
-						padding: 3rem 0 0;
+						position: relative;
+						min-height: 380px;
+						display: flex;
+						align-items: flex-end;
+						padding: 2.5rem 2.5rem 2.25rem;
+						margin-top: 2rem;
+						border-radius: 14px;
+						overflow: hidden;
+						background: #0a0a0a;
+						animation: heroIn 0.55s cubic-bezier(.22, 1, .36, 1) both;
+					}
+
+					.artist-hero-bg {
+						position: absolute;
+						inset: 0;
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+						object-position: center 25%;
+						filter: brightness(0.5) saturate(1.1);
+						z-index: 0;
+					}
+
+					.artist-hero-bg-fallback {
+						position: absolute;
+						inset: 0;
+						background: var(--grad);
+						opacity: 0.35;
+						z-index: 0;
+					}
+
+					.artist-hero::after {
+						content: '';
+						position: absolute;
+						inset: 0;
+						background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(6, 4, 10, 0.55) 60%, rgba(6, 4, 10, 0.94) 100%);
+						z-index: 1;
+					}
+
+					.artist-hero-content {
+						position: relative;
+						z-index: 2;
+						width: 100%;
+						min-width: 0;
+					}
+
+					.verified-badge {
+						display: inline-flex;
+						align-items: center;
+						gap: 6px;
+						font-family: 'DM Sans', sans-serif;
+						font-size: 0.8rem;
+						font-weight: 700;
+						color: #fff;
+						margin-bottom: 0.9rem;
+					}
+
+					.verified-badge svg {
+						flex-shrink: 0;
+					}
+
+					.artist-name-spotify {
+						font-family: 'Syne', sans-serif;
+						font-weight: 800;
+						font-size: clamp(2.4rem, 6.5vw, 5.25rem);
+						line-height: 1.02;
+						letter-spacing: -0.02em;
+						color: #fff;
+						margin-bottom: 1.1rem;
+						text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+						word-break: break-word;
+					}
+
+					.hero-stats-line {
+						display: flex;
+						align-items: center;
+						flex-wrap: wrap;
+						gap: 0.5rem;
+						font-family: 'DM Sans', sans-serif;
+						font-size: 0.92rem;
+						font-weight: 500;
+						color: rgba(255, 255, 255, 0.85);
+					}
+
+					.hero-stats-line .dot {
+						opacity: 0.5;
+					}
+
+					.hero-stats-line strong {
+						font-weight: 700;
+						color: #fff;
+					}
+
+					.action-row {
+						position: relative;
+						z-index: 2;
+						display: flex;
+						align-items: center;
+						gap: 1.5rem;
+						margin: 1.75rem 0 0;
+					}
+
+					.play-btn-spotify {
+						width: 58px;
+						height: 58px;
+						border-radius: 50%;
+						background: #1db954;
+						border: none;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						cursor: pointer;
+						box-shadow: 0 8px 24px rgba(29, 185, 84, 0.35);
+						transition: transform 0.18s, background 0.18s;
+						flex-shrink: 0;
+					}
+
+					.play-btn-spotify:hover {
+						transform: scale(1.06);
+						background: #1ed760;
+					}
+
+					.play-btn-spotify svg {
+						margin-left: 3px;
+					}
+
+					.artist-hero-legacy {
+						padding: 2.5rem 0 0;
 						display: flex;
 						gap: 3.5rem;
 						align-items: flex-start;
@@ -1044,7 +1172,7 @@
 					<main>
 
 					<!-- Edit button — fixed top-right, below nav -->
-					<button class="btn-edit-fixed" id="edit-btn" onclick="goToEditPage()" style="display:none" aria-label="Edit artist">
+					<button class="btn-edit-fixed" id="edit-btn" onclick="goToEditPage()" style="${empty artist ? 'display:none' : ''}" aria-label="Edit artist">
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
 							 stroke="currentColor" stroke-width="2.2">
 							<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -1055,108 +1183,45 @@
 
 						<div class="wrapper">
 
-							<!-- SKELETON shown while fetching -->
-							<div id="skeleton-view">
-								<div class="artist-hero">
-									<div class="artist-avatar-skel skel"></div>
-									<div class="artist-hero-info" style="flex:1">
-										<div class="skel"
-											style="height:0.75rem;width:160px;margin-bottom:1.2rem;border-radius:4px;">
-										</div>
-										<div class="artist-name-skel skel"></div>
-										<div class="skel"
-											style="height:0.75rem;width:100px;margin-bottom:1.6rem;border-radius:4px;">
-										</div>
-										<div style="display:flex;gap:0.6rem;margin-bottom:1.6rem;">
-											<div class="skel" style="height:1.8rem;width:80px;border-radius:100px;">
-											</div>
-											<div class="skel" style="height:1.8rem;width:60px;border-radius:100px;">
-											</div>
-										</div>
-										<div style="display:flex;gap:1.6rem;margin-bottom:2rem;">
-											<div class="meta-skel skel"></div>
-											<div class="meta-skel skel"></div>
-											<div class="meta-skel skel"></div>
-										</div>
-										<div style="display:flex;gap:0.75rem;">
-											<div class="skel" style="height:2.6rem;width:130px;border-radius:100px;">
-											</div>
-											<div class="skel" style="height:2.6rem;width:110px;border-radius:100px;">
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="section-divider"></div>
-								<div class="info-grid">
-									<div class="info-cell info-cell-skel" style="padding:1.4rem 1.6rem"
-										aria-hidden="true">
-										<div class="skel"
-											style="height:0.65rem;width:70px;margin-bottom:0.55rem;border-radius:4px;">
-										</div>
-										<div class="skel info-cell-value"></div>
-									</div>
-									<div class="info-cell info-cell-skel" aria-hidden="true">
-										<div class="skel"
-											style="height:0.65rem;width:55px;margin-bottom:0.55rem;border-radius:4px;">
-										</div>
-										<div class="skel info-cell-value"></div>
-									</div>
-									<div class="info-cell info-cell-skel" aria-hidden="true">
-										<div class="skel"
-											style="height:0.65rem;width:80px;margin-bottom:0.55rem;border-radius:4px;">
-										</div>
-										<div class="skel info-cell-value"></div>
-									</div>
-									<div class="info-cell info-cell-skel" aria-hidden="true">
-										<div class="skel"
-											style="height:0.65rem;width:60px;margin-bottom:0.55rem;border-radius:4px;">
-										</div>
-										<div class="skel info-cell-value"></div>
-									</div>
-								</div>
-							</div>
+							<c:choose>
 
-							<!-- ERROR STATE (hidden until needed) -->
-							<div id="error-view" style="display:none">
-								<div class="error-state">
-									<div class="error-icon" aria-hidden="true">
-										<svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-											stroke="var(--red-light)" stroke-width="1.5" stroke-linecap="round">
-											<circle cx="12" cy="12" r="9" />
-											<line x1="12" y1="8" x2="12" y2="12" />
-											<circle cx="12" cy="16" r="0.5" fill="var(--red-light)" />
-										</svg>
+								<%-- ═══ ERROR STATE — controller's model attribute "artist" is null ═══ --%>
+								<c:when test="${empty artist}">
+									<div id="error-view">
+										<div class="error-state">
+											<div class="error-icon" aria-hidden="true">
+												<svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+													stroke="var(--red-light)" stroke-width="1.5" stroke-linecap="round">
+													<circle cx="12" cy="12" r="9" />
+													<line x1="12" y1="8" x2="12" y2="12" />
+													<circle cx="12" cy="16" r="0.5" fill="var(--red-light)" />
+												</svg>
+											</div>
+											<h3>Artist not found</h3>
+											<p id="error-msg">We couldn't load this artist's profile. The record may have been
+												removed or the ID is invalid.</p>
+											<div
+												style="display:flex;gap:0.75rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;">
+												<a href="javascript:history.back()" class="btn-back">
+													<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+														stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+														aria-hidden="true">
+														<line x1="19" y1="12" x2="5" y2="12" />
+														<polyline points="12 19 5 12 12 5" />
+													</svg>
+													Go Back
+												</a>
+											</div>
+										</div>
 									</div>
-									<h3>Artist not found</h3>
-									<p id="error-msg">We couldn't load this artist's profile. The record may have been
-										removed or the ID is invalid.</p>
-									<div
-										style="display:flex;gap:0.75rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;">
-										<a href="javascript:history.back()" class="btn-back">
-											<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-												stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-												aria-hidden="true">
-												<line x1="19" y1="12" x2="5" y2="12" />
-												<polyline points="12 19 5 12 12 5" />
-											</svg>
-											Go Back
-										</a>
-									</div>
-								</div>
-							</div>
+								</c:when>
 
-							<!-- ARTIST CONTENT (hidden until loaded) -->
-							<div id="artist-view" style="display:none">
+								<%-- ═══ ARTIST CONTENT — rendered directly from the server-side "artist" model attribute ═══ --%>
+									<c:otherwise>
+									<div id="artist-view">
 
-								<!-- Hero -->
-								<div class="artist-hero" id="artist-hero-section">
-
-									<div class="artist-avatar-wrap" id="avatar-wrap">
-										<!-- injected by JS -->
-									</div>
-									
-									<div class="artist-hero-info">
-										<nav class="breadcrumb" aria-label="Breadcrumb">
+										<!-- Breadcrumb (above banner) -->
+										<nav class="breadcrumb" aria-label="Breadcrumb" style="margin-top:1.5rem">
 											<a href="${pageContext.request.contextPath}/">Home</a>
 											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 												stroke-width="2.5" stroke-linecap="round">
@@ -1168,36 +1233,128 @@
 												stroke-width="2.5" stroke-linecap="round">
 												<polyline points="9 18 15 12 9 6" />
 											</svg>
-											<span id="breadcrumb-name" aria-current="page">Artist</span>
+											<span id="breadcrumb-name" aria-current="page"><c:out value="${not empty artist.name ? artist.name : 'Artist'}"/></span>
 										</nav>
 
-										<h1 class="artist-name" id="artist-name">—</h1>
+										<!-- Hero banner (Spotify-style) -->
+										<div class="artist-hero" id="artist-hero-section">
 
-										<div class="artist-id-badge">
-											ID <code id="artist-id-display">—</code>
+											<c:choose>
+												<c:when test="${not empty artist.imageURL}">
+													<img class="artist-hero-bg" id="hero-bg-img" src="<c:out value='${artist.imageURL}'/>"
+														alt="" aria-hidden="true"
+														onerror="this.remove();" />
+												</c:when>
+												<c:otherwise>
+													<div class="artist-hero-bg-fallback" aria-hidden="true"></div>
+												</c:otherwise>
+											</c:choose>
+
+											<div class="artist-hero-content">
+												<div class="verified-badge">
+													<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+														<circle cx="12" cy="12" r="10" fill="#3d91f4"/>
+														<path d="M8 12.5l2.5 2.5L16 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+													</svg>
+													Verified Artist
+												</div>
+
+												<h1 class="artist-name-spotify" id="artist-name"><c:out value="${not empty artist.name ? artist.name : 'Unknown Artist'}"/></h1>
+
+												<div class="hero-stats-line">
+													<span><strong><fmt:formatNumber value="${not empty artist.viewCount ? artist.viewCount : 0}" pattern="#,###"/></strong> views</span>
+													<c:if test="${not empty artist.country}">
+														<span class="dot">&bull;</span>
+														<span><c:out value="${artist.country}"/></span>
+													</c:if>
+													<c:if test="${not empty artist.type}">
+														<span class="dot">&bull;</span>
+														<span class="js-format-type"><c:out value="${artist.type}"/></span>
+													</c:if>
+												</div>
+											</div>
 										</div>
 
-										<div class="genre-list" id="genre-list">
-											<!-- pills injected -->
+										<div class="artist-id-badge" style="margin-top:1.6rem">
+											ID <code id="artist-id-display"><c:out value="${not empty artist.id ? artist.id : '—'}"/></code>
 										</div>
 
-										<div class="meta-row" id="meta-row">
-											<!-- meta items injected -->
+										<div class="genre-list" id="genre-list" style="margin-top:1rem">
+											<c:choose>
+												<c:when test="${not empty artist.genre}">
+													<c:forEach items="${artist.genre}" var="g">
+														<span class="genre-pill"><c:out value="${g}"/></span>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<span class="genre-pill">Artist</span>
+												</c:otherwise>
+											</c:choose>
 										</div>
-									</div>
-								</div>
 
-								<div class="section-divider"></div>
+										<div class="section-divider"></div>
 
-								<!-- Details -->
-								<div class="details-section">
-									<div class="section-title">Profile Details</div>
-									<div class="info-grid" id="info-grid">
-										<!-- cells injected -->
-									</div>
-								</div>
+										<!-- Details -->
+										<div class="details-section">
+											<div class="section-title">Profile Details</div>
+											<div class="info-grid" id="info-grid">
 
-							</div><!-- /artist-view -->
+												<c:if test="${not empty artist.bio}">
+													<div class="info-cell" style="grid-column:1/-1">
+														<div class="info-cell-label">Biography</div>
+														<div class="info-cell-value"><c:out value="${artist.bio}"/></div>
+													</div>
+												</c:if>
+
+												<c:if test="${not empty artist.genre}">
+													<div class="info-cell">
+														<div class="info-cell-label">Genres</div>
+														<div class="info-cell-value">
+															<c:forEach items="${artist.genre}" var="g" varStatus="st">
+																<c:out value="${g}"/><c:if test="${!st.last}">, </c:if>
+															</c:forEach>
+														</div>
+													</div>
+												</c:if>
+
+												<c:if test="${not empty artist.country}">
+													<div class="info-cell">
+														<div class="info-cell-label">Country</div>
+														<div class="info-cell-value"><c:out value="${artist.country}"/></div>
+													</div>
+												</c:if>
+
+												<c:if test="${not empty artist.type}">
+													<div class="info-cell">
+														<div class="info-cell-label">Artist Type</div>
+														<div class="info-cell-value js-format-type"><c:out value="${artist.type}"/></div>
+													</div>
+												</c:if>
+
+												<c:if test="${not empty artist.id}">
+													<div class="info-cell">
+														<div class="info-cell-label">Artist ID</div>
+														<div class="info-cell-value"><code style="font-size:0.82rem;letter-spacing:0;"><c:out value="${artist.id}"/></code></div>
+													</div>
+												</c:if>
+
+												<div class="info-cell">
+													<div class="info-cell-label">Views</div>
+													<div class="info-cell-value"><fmt:formatNumber value="${not empty artist.viewCount ? artist.viewCount : 0}" pattern="#,###"/></div>
+												</div>
+
+												<c:if test="${empty artist.bio and empty artist.genre and empty artist.country and empty artist.type and empty artist.id}">
+													<div class="info-cell" style="grid-column:1/-1">
+														<span class="info-cell-value empty">No additional details available.</span>
+													</div>
+												</c:if>
+
+											</div>
+										</div>
+
+									</div><!-- /artist-view -->
+								</c:otherwise>
+							</c:choose>
 
 						</div><!-- /wrapper -->
 					</main>
@@ -1258,6 +1415,15 @@
 							}
 						});
 						
+						document.addEventListener("DOMContentLoaded", function() {
+						        // Extract the current artist ID from the URL pathway dynamically
+						       	if(!currentArtistId) return;
+
+						        // Fire a single POST request to safely record the viewer
+						        fetch(CTX + '/api/artists/' + currentArtistId + '/view', { method: 'POST' })
+						        	.catch(err => console.error('Failed to record view: ', err));
+						 });
+						
 						/* Edit button logic */
 						function goToEditPage() {
 						    if (!currentArtistId) return;
@@ -1268,6 +1434,9 @@
 						/* Context root injected server-side */
 						const CTX = '${pageContext.request.contextPath}';
 
+						/* Artist id injected server-side (used by the Edit button) */
+						currentArtistId = '<c:out value="${artist.mongoId}"/>' || null;
+
 						/* ── Nav scroll effect ── */
 						const mainNav = document.getElementById('main-nav');
 						window.addEventListener('scroll', () => {
@@ -1277,224 +1446,31 @@
 						/* ── Helpers ── */
 						function el(id) {return document.getElementById(id);}
 
-						function escHtml(str) {
-							if (str == null) return '';
-							return String(str)
-								.replace(/&/g, '&amp;')
-								.replace(/</g, '&lt;')
-								.replace(/>/g, '&gt;')
-								.replace(/"/g, '&quot;');
-						}
-
-						function val(v) {
-							return (v !== null && v !== undefined && String(v).trim() !== '')
-								? escHtml(v) : null;
-						}
-
-						/* ── Extract ?id= from URL ── */
-						function getArtistId() {
-							const params = new URLSearchParams(window.location.search);
-							return params.get('id');
-						}
-
-						/* ── Show / hide panels ── */
-						function showSkeleton() {
-							el('skeleton-view').style.display = '';
-							el('artist-view').style.display = 'none';
-							el('error-view').style.display = 'none';
-							el('edit-btn').style.display = 'none';
-						}
-						function showError(msg) {
-							el('skeleton-view').style.display = 'none';
-							el('artist-view').style.display = 'none';
-							el('error-view').style.display = '';
-							el('edit-btn').style.display = 'none';
-							if (msg) el('error-msg').textContent = msg;
-						}
-						function showArtist() {
-							el('skeleton-view').style.display = 'none';
-							el('error-view').style.display = 'none';
-							el('artist-view').style.display = '';
-							el('edit-btn').style.display = '';
-						}
-
-						/* ── Build avatar ── */
-						function buildAvatar(artist) {
-							const wrap = el('avatar-wrap');
-							if (artist.imageURL) {
-								const img = document.createElement('img');
-								img.className = 'artist-avatar';
-								img.src = artist.imageURL;
-								img.alt = artist.name || 'Artist photo';
-								img.width = 240;
-								img.height = 240;
-								img.onerror = () => {
-									img.remove();
-									wrap.innerHTML = `<div class="artist-avatar-monogram" aria-hidden="true">\${escHtml((artist.name || '?')[0].toUpperCase())}</div>`;
-								};
-								wrap.appendChild(img);
-							} else {
-								wrap.innerHTML = `<div class="artist-avatar-monogram" aria-hidden="true">\${escHtml((artist.name || '?')[0].toUpperCase())}</div>`;
-							}
-						}
-
-						/* ── Build genre pills ── */
-						/* Java HashSet<String> serialises to a JSON array e.g. ["Rock","Pop"] */
-						function buildGenres(artist) {
-							const list = el('genre-list');
-							const genres = Array.isArray(artist.genre) ? artist.genre : [];
-
-							if (genres.length === 0) {
-								list.innerHTML = '<span class="genre-pill">Artist</span>';
-								return;
-							}
-							list.innerHTML = genres.map(g => `<span class="genre-pill">\${escHtml(g)}</span>`).join('');
-						}
-
 						/* ── Format ArtistType enum → readable label ── */
 						/* e.g. "SOLO_ARTIST" → "Solo Artist", "BAND" → "Band" */
 						function formatType(raw) {
-							if (!raw) return null;
+							if (!raw) return '';
 							return String(raw)
 								.toLowerCase()
 								.replace(/_/g, ' ')
 								.replace(/\b\w/g, c => c.toUpperCase());
 						}
 
-						/* ── Build meta row (prominent top-level fields) ── */
-						/* Artist DTO fields surfaced here: country, type */
-						function buildMeta(artist) {
-							const row = el('meta-row');
-							const items = [];
+						/* ── Init ──
+						   The artist markup (hero, meta row, info grid) is already rendered
+						   server-side via JSTL from the "artist" model attribute, so there's
+						   no fetch step. We just tidy up the one field (the raw enum name)
+						   that's nicer to format on the client, and set the page title. */
+						(function init() {
+							document.querySelectorAll('.js-format-type').forEach(node => {
+								node.textContent = formatType(node.textContent.trim());
+							});
 
-							if (val(artist.country)) {
-								items.push({label: 'Country', value: val(artist.country)});
+							const nameEl = el('artist-name');
+							if (nameEl && nameEl.textContent.trim() && nameEl.textContent.trim() !== 'Unknown Artist') {
+								document.title = nameEl.textContent.trim() + ' — Resonance';
 							}
-							if (artist.type) {
-								items.push({label: 'Type', value: escHtml(formatType(artist.type))});
-							}
-
-							if (items.length === 0) return;
-
-							row.innerHTML = items.map(item => `
-      <div class="meta-item">
-        <div class="meta-label">\${item.label}</div>
-        <div class="meta-value">\${item.value}</div>
-      </div>
-    `).join('');
-						}
-
-						/* ── Build info grid ── */
-						/* Maps all Artist DTO fields not already shown in the hero/meta row.
-						   DTO: mongoId, id, name, type, bio, country, genre (Set<String>), imageURL */
-						function buildInfoGrid(artist) {
-							const grid = el('info-grid');
-							const cells = [];
-
-							/* Bio — full-width feel, spans nicely in auto-fill grid */
-							if (val(artist.bio)) {
-								cells.push({label: 'Biography', display: escHtml(artist.bio), wide: true});
-							}
-
-							/* Genres — also shown as pills in hero, but listed here as plain text for completeness */
-							const genres = Array.isArray(artist.genre) ? artist.genre : [];
-							if (genres.length > 0) {
-								cells.push({label: 'Genres', display: genres.map(g => escHtml(g)).join(', ')});
-							}
-
-							/* Country */
-							if (val(artist.country)) {
-								cells.push({label: 'Country', display: val(artist.country)});
-							}
-
-							/* Artist type */
-							if (artist.type) {
-								cells.push({label: 'Artist Type', display: escHtml(formatType(artist.type))});
-							}
-
-							/* Artist ID (the domain id field, not mongoId) */
-							if (val(artist.id)) {
-								cells.push({label: 'Artist ID', display: `<code style="font-size:0.82rem;letter-spacing:0;">\${escHtml(artist.id)}</code>`});
-							}
-
-							if (cells.length === 0) {
-								grid.innerHTML = `<div class="info-cell" style="grid-column:1/-1">
-        <span class="info-cell-value empty">No additional details available.</span>
-      </div>`;
-								return;
-							}
-
-							grid.innerHTML = cells.map(({label, display, wide}) => `
-      <div class="info-cell"\${wide ? ' style="grid-column:1/-1"' : ''}>
-        <div class="info-cell-label">\${escHtml(label)}</div>
-        <div class="info-cell-value">\${display}</div>
-      </div>
-    `).join('');
-						}
-
-						/* ── Render artist ── */
-						function renderArtist(artist) {
-							/* Page title */
-							document.title = (artist.name ? artist.name + ' — ' : '') + 'Resonance';
-
-							/* Breadcrumb + name */
-							el('breadcrumb-name').textContent = artist.name || 'Artist';
-							el('artist-name').textContent = artist.name || 'Unknown Artist';
-							el('artist-id-display').textContent = artist.id ?? '—';
-
-							buildAvatar(artist);
-							buildGenres(artist);
-							buildMeta(artist);
-							buildInfoGrid(artist);
-
-							showArtist();
-						}
-
-						/* ── Fetch & render ── */
-						async function loadArtist() {
-							const id = getArtistId();
-							currentArtistId = id;   // make available to goToEditPage
-
-							if (!id) {
-								showError('No artist ID was provided in the URL. Please go back to the search results and select an artist.');
-								return;
-							}
-
-							showSkeleton();
-
-							try {
-								/* Use the server-injected context root for the API call */
-								const response = await fetch(`\${CTX}/api/artists/\${encodeURIComponent(id)}`, {
-									headers: {'Accept': 'application/json'}
-								});
-
-								if (response.status === 404) {
-									showError(`No artist found with ID "\${escHtml(id)}".`);
-									return;
-								}
-								if (!response.ok) {
-									showError(`Failed to load artist (HTTP \${response.status}). Please try again.`);
-									return;
-								}
-
-								const artist = await response.json();
-
-								/* Spring ResponseEntity can return HTTP 200 with a null body if orElse(null) resolves */
-								if (!artist || typeof artist !== 'object') {
-									showError(`No artist found with ID "\${escHtml(id)}".`);
-									return;
-								}
-
-								renderArtist(artist);
-
-							} catch (err) {
-								console.error('Artist fetch error:', err);
-								showError('A network error occurred. Please check your connection and try again.');
-							}
-						}
-
-						/* ── Boot ── */
-						loadArtist();
+						})();
 					</script>
 
 			</body>

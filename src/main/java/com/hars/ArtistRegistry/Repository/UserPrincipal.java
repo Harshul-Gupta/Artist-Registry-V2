@@ -38,7 +38,7 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
 	}
 	
 	public String getInitials() {
-		return ""+ user.getName().charAt(0);
+		return ""+ user.getUsername().charAt(0);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
 	
 	@Override
 	public String getName() {
-		return oAuth2Attributes !=null? (String) oAuth2Attributes.get("sub"): user.getName();
+		return oAuth2Attributes !=null? (String) oAuth2Attributes.get("sub"): user.getUsername();
 	}
 
 	@Override

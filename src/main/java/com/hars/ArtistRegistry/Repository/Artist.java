@@ -8,12 +8,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Document(collection = "Artist")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Artist {
 	@Id
 	private String mongoId;
@@ -26,6 +32,7 @@ public class Artist {
 
     private ArtistType type; 
 
+    @NotBlank(message = "Bio is required field")
     private String bio;
 
 	@NotBlank(message = "Country is required")
@@ -36,99 +43,7 @@ public class Artist {
 	private String imageURL;
 	
 	private String spotifyId;
-
-	public String getSpotifyId() {
-		return spotifyId;
-	}
-
-
-	public void setSpotifyId(String spotifyId) {
-		this.spotifyId = spotifyId;
-	}
-
-
-	public String getMongoId() {
-		return mongoId;
-	}
-
-
-	public void setMongoId(String mongoId) {
-		this.mongoId = mongoId;
-	}
-
-
-	public String getId() {
-		return id;
-	}
-
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
-	public String getName() {
-		return name;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public ArtistType getType() {
-		return type;
-	}
-
-
-	public void setType(ArtistType type) {
-		this.type = type;
-	}
-
-
-	public String getBio() {
-		return bio;
-	}
-
-
-	public void setBio(String bio) {
-		this.bio = bio;
-	}
-
-
-	public String getCountry() {
-		return country;
-	}
-
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-
-	public Set<String> getGenre() {
-		return genre;
-	}
-
-
-	public void setGenre(Set<String> genre) {
-		this.genre = genre;
-	}
-
-
-	public Artist() {
-		super();
-	}
-
-
-	public String getImageURL() {
-		return imageURL;
-	}
-
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
 	
+	private Long viewCount = 0L;
+
 }

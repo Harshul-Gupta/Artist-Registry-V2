@@ -53,4 +53,11 @@ public class LoggingAspect {
 		logger.info("[Search Metrics] Search method took {} ms", (System.currentTimeMillis()-startTime));
 		return result;
 	}
+	
+	@After("execution(public String com.hars.ArtistRegistry.Controller.ArtistController.getArtistDetails(..))")
+	public void logArtistDetails(JoinPoint joinPoint)
+	{
+		String id = (String)joinPoint.getArgs()[0];
+		logger.info("Artist details called for artist: "+ id);
+	}
 }

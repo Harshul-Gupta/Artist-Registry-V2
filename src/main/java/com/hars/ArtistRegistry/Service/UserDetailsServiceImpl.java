@@ -14,13 +14,17 @@ import com.hars.ArtistRegistry.Repository.UserRepo;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	UserRepo repo;
+	
+	private final UserRepo repo;
+	
+	public UserDetailsServiceImpl(UserRepo repo) {
+		this.repo= repo;
+	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		User user = repo.findByUsername(username);
+		User user = repo.findByUsername(username).orElse(null);
 		if(user== null)
 			throw new UsernameNotFoundException("Inavlid username! Please Try again");
 		

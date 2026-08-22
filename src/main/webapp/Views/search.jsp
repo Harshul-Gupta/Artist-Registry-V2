@@ -682,26 +682,27 @@
 
 					.tiles-grid {
 						display: grid;
-						grid-template-columns: repeat(5, 1fr);
+						grid-template-columns: repeat(5, minmax(0, 1fr));
+						align-items: start;
 						gap: 1rem 1.4rem;
 						padding-bottom: 6rem;
 					}
 
 					@media (max-width: 1100px) {
 						.tiles-grid {
-							grid-template-columns: repeat(4, 1fr);
+							grid-template-columns: repeat(4, minmax(0, 1fr));
 						}
 					}
 
 					@media (max-width: 800px) {
 						.tiles-grid {
-							grid-template-columns: repeat(3, 1fr);
+							grid-template-columns: repeat(3, minmax(0, 1fr));
 						}
 					}
 
 					@media (max-width: 520px) {
 						.tiles-grid {
-							grid-template-columns: repeat(2, 1fr);
+							grid-template-columns: repeat(2, minmax(0, 1fr));
 						}
 					}
 
@@ -717,6 +718,9 @@
 						display: flex;
 						flex-direction: column;
 						align-items: center;
+						width: 100%;
+						min-width: 0;
+						max-width: 100%;
 						padding: 1rem 0.5rem 1.2rem;
 						animation: tileIn 0.45s cubic-bezier(.22, 1, .36, 1) both;
 						transition: transform 0.35s cubic-bezier(.22, 1, .36, 1);
@@ -828,6 +832,7 @@
 					/* Tile body — text below circle */
 					.tile-body {
 						width: 100%;
+						min-width: 0;
 						display: flex;
 						flex-direction: column;
 						align-items: center;
@@ -1441,7 +1446,7 @@
 															<c:set var="delay"
 																value="${status.index * 45 > 360 ? 360 : status.index * 45}" />
 
-															<a href="${pageContext.request.contextPath}/artist-details?id=${artist.mongoId}"
+															<a href="${pageContext.request.contextPath}/artist-details/${artist.mongoId}"
 																class="hero-tile" style="animation-delay:${delay}ms"
 																role="listitem"
 																aria-label="${fn:escapeXml(artist.name)}"

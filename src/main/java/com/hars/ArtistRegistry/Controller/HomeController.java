@@ -2,6 +2,7 @@ package com.hars.ArtistRegistry.Controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,15 @@ public class HomeController {
 		artist.setImageURL(publicS3Url);
 		Artist createdArtist= repo.save(artist);
 		return new ResponseEntity<Artist>(createdArtist, HttpStatus.CREATED);
+	}
+//	
+//	@GetMapping("/topArtists")
+//	public ResponseEntity<List<Artist>> 
+	
+	@PostMapping("/{mongoId}/view")
+	public 	ResponseEntity<Void> updateViewCount(@PathVariable String mongoId){
+		artistService.incrementViewCount(mongoId);
+		return ResponseEntity.ok().build();
 	}
 	
 	@PatchMapping("/{mongoId}")

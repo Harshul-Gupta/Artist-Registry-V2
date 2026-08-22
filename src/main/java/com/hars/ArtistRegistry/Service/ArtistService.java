@@ -4,6 +4,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,12 +22,14 @@ public class ArtistService {
 	private final ArtistRepo artistRepo;
 	private final ObjectMapper objectMapper;
 	private final S3ImageService s3ImageService;
+	private final MongoTemplate mongoTemplate;
 	
-	public ArtistService(ArtistRepo artistRepo, ObjectMapper objectMapper, S3ImageService s3ImageService) {
+	public ArtistService(ArtistRepo artistRepo, ObjectMapper objectMapper, S3ImageService s3ImageService, MongoTemplate mongoTemplate) {
 		
 		this.artistRepo= artistRepo;
 		this.objectMapper= objectMapper;
 		this.s3ImageService= s3ImageService;
+		this.mongoTemplate= mongoTemplate;
 	}
 	
 	public Artist updateArtist(String mongoId, Map<String, Object> updates, MultipartFile file)
@@ -44,7 +50,6 @@ public class ArtistService {
 			}catch (Exception e) {
 				throw new RuntimeException("Failure to upload image");
 			}
-			
 		}
 		
 		updates.forEach((K, V) -> {
@@ -81,5 +86,12 @@ public class ArtistService {
 			s3ImageService.deleteArtistImage(key);
 		}
 		artistRepo.delete(artist);
+	}
+	
+	public void incrementViewCount(String artistId) {
+		
+		Query query = new Query(Criteria.where("mongoId").is(artistId));
+		Update update = new Update().inc("viewCount", 1);
+		mongoTemplate.updateFirst(query, update, Artist.class);
 	}
 }

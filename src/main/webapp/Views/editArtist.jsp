@@ -460,9 +460,9 @@
                 <label for="type">Type</label>
                 <select id="type">
                     <option value="">— Select —</option>
-                    <option value="SOLO">Solo</option>
-                    <option value="BAND">Band</option>
-                    <option value="DUO">Duo</option>
+                    <option value="solo">Solo</option>
+                    <option value="band">Band</option>
+                    <option value="duo">Duo</option>
                 </select>
             </div>
 
@@ -761,7 +761,7 @@
 
             // Redirect to artist detail page after short delay
             setTimeout(() => {
-                window.location.href = `${pageContext.request.contextPath}/artist-details?id=\${artistId}`;
+                window.location.href = `${pageContext.request.contextPath}/artist-details/\${artistId}`;
             }, 900);
 
         } catch (e) {

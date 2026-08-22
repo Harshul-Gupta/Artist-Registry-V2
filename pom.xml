@@ -30,6 +30,7 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+		<lombok.version>1.18.36</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -56,13 +57,42 @@
 			<scope>test</scope>
 		</dependency>
 		
-				<!-- JUnit 5 API and Engine -->
+			<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Core Testcontainers Support -->
 		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter</artifactId>
-		    <version>5.10.2</version>
+		    <groupId>org.testcontainers</groupId>
+		    <artifactId>testcontainers</artifactId>
 		    <scope>test</scope>
 		</dependency>
+		<!-- Dedicated MongoDB Container Module -->
+		<!-- Source: https://mvnrepository.com/artifact/org.testcontainers/mongodb -->
+		<dependency>
+		    <groupId>org.testcontainers</groupId>
+		    <artifactId>mongodb</artifactId>
+		    <version>1.21.4</version>
+		    <scope>test</scope>
+		</dependency>
+				<!-- Spring Boot Testcontainers Starter -->
+			<dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-testcontainers</artifactId>
+			    <scope>test</scope>
+			</dependency>
+			
+		<!-- Source: https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
+		<dependency>
+		    <groupId>org.testcontainers</groupId>
+		    <artifactId>junit-jupiter</artifactId>
+		    <version>1.21.4</version>
+		    <scope>test</scope>
+		</dependency>
+
+
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -132,7 +162,8 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<scope>compile</scope>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -152,6 +183,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			 <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>1.18.42</version>
+                    </path>
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
 		</plugins>
 	</build>
 

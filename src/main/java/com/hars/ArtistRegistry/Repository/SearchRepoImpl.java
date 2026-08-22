@@ -48,7 +48,7 @@ public class SearchRepoImpl implements SearchRepo{
 	    if (name != null && !name.isBlank()) {
 	        shouldClauses.add(new Document("autocomplete", new Document("query", name)
 	                .append("path", "name")
-	                .append("fuzzy", new Document()))); // Handles "fre" -> "Fred", and typos like "frad"
+	                .append("fuzzy", new Document("maxEdits", 1)))); 
 	    }
 
 	    // 2. Exact/Phrase Match Genre Filter

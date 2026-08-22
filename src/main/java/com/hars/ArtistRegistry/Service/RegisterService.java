@@ -1,8 +1,5 @@
 package com.hars.ArtistRegistry.Service;
 
-import java.security.AuthProvider;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +22,7 @@ public class RegisterService {
 	}
 	public void registerArtist(UserResponseDTO user)
 	{
-		if(repo.findByUsername(user.username())!=null)
+		if(!repo.findByUsername(user.username()).isEmpty())
 			throw new RuntimeException("Username already present");
 		User newUser = new User();
 		newUser.setUsername(user.username());

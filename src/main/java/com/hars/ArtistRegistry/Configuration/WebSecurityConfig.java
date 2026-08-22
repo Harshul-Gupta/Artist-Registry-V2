@@ -107,20 +107,4 @@ public class WebSecurityConfig{
 		
 		return http.build();
 	}	
-	
-//	@Bean
-//	public UserDetailsService userDetailsService() { 
-//		UserDetails user= User.builder()
-//				.username("Lemon")
-//				.password(passwordEncoder().encode("Password"))
-//				.roles("user")
-//				.build();
-//		return new InMemoryUserDetailsManager(user);
-//	}
-//	
-//	@Bean
-//	public PasswordEncoder passwordEncoder()
-//	{
-//		return new BCryptPasswordEncoder();
-//	}
 }
