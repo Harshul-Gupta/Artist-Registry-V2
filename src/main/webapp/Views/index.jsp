@@ -617,7 +617,7 @@
 										</div>
 									</li>
 									<li>
-										<a href="${pageContext.request.contextPath}/artists" class="btn-library">
+										<a href="${pageContext.request.contextPath}/library" class="btn-library">
 											Library
 										</a>
 									</li>
@@ -684,7 +684,7 @@
 								<p>Browse the complete library catalogue — filter by specific sub-genres, production
 									companies, or country codes seamlessly.</p>
 								<div>
-									<a href="${pageContext.request.contextPath}/artists" class="btn-cta">
+									<a href="${pageContext.request.contextPath}/library" class="btn-cta">
 										Open Library
 									</a>
 								</div>

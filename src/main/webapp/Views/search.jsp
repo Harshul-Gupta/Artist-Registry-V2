@@ -1237,7 +1237,7 @@
 											</div>
 										</li>
 										<li>
-											<a href="${pageContext.request.contextPath}/artists" class="btn-library">
+											<a href="${pageContext.request.contextPath}/library" class="btn-library">
 												Library
 											</a>
 										</li>

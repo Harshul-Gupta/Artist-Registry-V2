@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.hars.ArtistRegistry.Repository.Artist;
 import com.hars.ArtistRegistry.Repository.ArtistRepo;
 import com.hars.ArtistRegistry.Repository.SearchRepo;
-import com.hars.ArtistRegistry.Repository.SearchRepo.ArtistSlice;
+import com.hars.ArtistRegistry.Repository.ArtistSlice;
 import com.hars.ArtistRegistry.Service.ArtistService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,16 +86,6 @@ public class ArtistController {
     	model.addAttribute("artists", results);  
         return "search";
     }
-    /*
-     * Serves the full artist-library page at "/artists".
-     * Populates ${artists} with every artist for a browse/listing view.
-     */
-//    @GetMapping("/artists")
-//    public String artistLibraryPage(Model model) {
-//        model.addAttribute("artists", artistRepo.findAll());
-//        model.addAttribute("stats",   buildStats());
-//        return "artists";
-//    }
     
     @GetMapping("artist-details/{artistId}")
     public String getArtistDetails(@PathVariable String artistId, Model model)
@@ -126,6 +116,12 @@ public class ArtistController {
     public String libraryPage() 
     {
     	return "library";
+    }
+    
+    @GetMapping("/genre/{genre}")
+    public String genrePage(@PathVariable String genre,  Model model) {
+    	model.addAttribute("genre", genre);
+    	return "genre";
     }
     
     @RequestMapping("/login")
