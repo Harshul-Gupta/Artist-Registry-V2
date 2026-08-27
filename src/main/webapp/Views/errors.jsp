@@ -546,7 +546,7 @@
 										Reso<span>nance</span>
 									</a>
 									<ul class="nav-links">
-										<li><a href="${pageContext.request.contextPath}/artists">Library</a></li>
+										<li><a href="${pageContext.request.contextPath}/library">Library</a></li>
 										<li><a href="${pageContext.request.contextPath}/" class="btn-home">
 												<svg width="13" height="13" viewBox="0 0 24 24" fill="none"
 													stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
